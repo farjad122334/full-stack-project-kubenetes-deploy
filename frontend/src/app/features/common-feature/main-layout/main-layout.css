@@ -1,0 +1,41 @@
+.sidebar .nav-link {
+    color: #cbd5e1 !important;
+    /* Slate-300 */
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 10px 15px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+    transform: translateX(5px);
+}
+
+.active-link {
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+}
+
+.hover-bg:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Scrollbar Styling for webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

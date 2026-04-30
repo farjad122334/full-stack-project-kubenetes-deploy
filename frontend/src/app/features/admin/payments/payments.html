@@ -1,0 +1,159 @@
+<div class="payments-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h2>Payments & Revenue</h2>
+            <p class="subtitle">Financial overview and transaction history</p>
+        </div>
+        <button class="btn-outline">
+            <i class="bi bi-download"></i> Export Financial Report
+        </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <div class="card stat-card" *ngFor="let card of summaryCards">
+            <div class="card-body">
+                <div class="stat-content">
+                    <span class="stat-title">{{ card.title }}</span>
+                    <div class="stat-amount">{{ card.amount }}</div>
+                    <div class="stat-trend"
+                        [ngClass]="{'positive': card.trendUp, 'warning': !card.trendUp && card.isWarning}">
+                        {{ card.trend }}
+                        <span class="trend-note" *ngIf="!card.isWarning"></span>
+                    </div>
+                </div>
+                <div class="stat-icon" [ngClass]="card.bg">
+                    <i class="bi" [ngClass]="card.icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-row">
+        <!-- Revenue Trend (Area Chart) -->
+        <div class="card chart-card revenue-chart">
+            <h3>Revenue & Profit Trend</h3>
+            <div class="chart-container">
+                <svg viewBox="0 0 500 250" class="area-chart">
+                    <!-- Grid Lines -->
+                    <line x1="50" y1="50" x2="480" y2="50" stroke="#eee" />
+                    <line x1="50" y1="100" x2="480" y2="100" stroke="#eee" />
+                    <line x1="50" y1="150" x2="480" y2="150" stroke="#eee" />
+                    <line x1="50" y1="200" x2="480" y2="200" stroke="#eee" />
+
+                    <!-- Y Axis Labels -->
+                    <text x="40" y="200" text-anchor="end" class="chart-label">200000</text>
+                    <text x="40" y="150" text-anchor="end" class="chart-label">400000</text>
+                    <text x="40" y="100" text-anchor="end" class="chart-label">600000</text>
+                    <text x="40" y="50" text-anchor="end" class="chart-label">800000</text>
+
+                    <!-- X Axis Labels -->
+                    <text x="50" y="220" text-anchor="middle" class="chart-label">Jan</text>
+                    <text x="136" y="220" text-anchor="middle" class="chart-label">Feb</text>
+                    <text x="222" y="220" text-anchor="middle" class="chart-label">Mar</text>
+                    <text x="308" y="220" text-anchor="middle" class="chart-label">Apr</text>
+                    <text x="394" y="220" text-anchor="middle" class="chart-label">May</text>
+                    <text x="480" y="220" text-anchor="middle" class="chart-label">Jun</text>
+
+                    <!-- Revenue Path (Teal) -->
+                    <path d="M 50 200 C 100 150, 150 50, 222 100 S 350 150, 480 50 L 480 200 Z"
+                        fill="rgba(0, 192, 157, 0.5)" stroke="#00c09d" stroke-width="2" />
+
+                    <!-- Profit Path (Blue) -->
+                    <path d="M 50 200 C 100 180, 150 170, 222 150 S 350 160, 480 120 L 480 200 Z"
+                        fill="rgba(77, 144, 254, 0.5)" stroke="#4d90fe" stroke-width="2" />
+
+                    <!-- Hover Marker (Mock) -->
+                    <circle cx="222" cy="100" r="4" fill="white" stroke="#00c09d" stroke-width="2" />
+                    <circle cx="222" cy="150" r="4" fill="white" stroke="#4d90fe" stroke-width="2" />
+                    <line x1="222" y1="50" x2="222" y2="200" stroke="#ddd" stroke-dasharray="4" />
+
+                    <!-- Tooltip -->
+                    <g transform="translate(230, 60)">
+                        <rect width="140" height="70" fill="white" stroke="#eee" rx="4" filter="url(#shadow)" />
+                        <text x="10" y="20" font-weight="bold">Mar</text>
+                        <text x="10" y="40" fill="#4d90fe" font-size="12">profit: 148000</text>
+                        <text x="10" y="60" fill="#00c09d" font-size="12">revenue: 510000</text>
+                    </g>
+                </svg>
+                <div class="legend">
+                    <span class="legend-item"><span class="dot revenue"></span> Revenue</span>
+                    <span class="legend-item"><span class="dot profit"></span> Profit</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Breakdown (Donut Chart) -->
+        <div class="card chart-card breakdown-chart">
+            <h3>Payment Breakdown</h3>
+            <div class="breakdown-container">
+                <div class="donut-chart-wrapper">
+                    <svg viewBox="0 0 100 100" class="donut-chart">
+                        <ng-container *ngFor="let segment of donutSegments">
+                            <path [attr.d]="segment.path" [attr.fill]="segment.color" />
+                        </ng-container>
+                        <!-- Inner circle to make it a donut -->
+                        <circle cx="50" cy="50" r="30" fill="white" />
+                    </svg>
+                </div>
+
+                <div class="breakdown-legend">
+                    <div class="legend-row" *ngFor="let item of breakdown">
+                        <div class="label-group">
+                            <span class="dot" [style.background-color]="item.color"></span>
+                            <span>{{ item.label }}</span>
+                        </div>
+                        <span class="value">PKR {{ item.amount | number }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card table-card">
+        <h3>Recent Transactions</h3>
+        <div class="table-responsive">
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Tour</th>
+                        <th>Client</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let txn of transactions">
+                        <td class="id-col">{{ txn.id }}</td>
+                        <td class="tour-col">{{ txn.tour }}</td>
+                        <td>{{ txn.client }}</td>
+                        <td class="amount-col">PKR {{ txn.amount | number }}</td>
+                        <td class="date-col">{{ txn.date }}</td>
+                        <td>{{ txn.method }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="txn.status.toLowerCase()">
+                                {{ txn.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-view-action">View</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<svg width="0" height="0">
+    <filter id="shadow">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1" />
+    </filter>
+</svg>

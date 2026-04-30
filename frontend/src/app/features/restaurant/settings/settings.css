@@ -1,0 +1,19 @@
+/* Custom colors matching the screenshots */
+.bg-purple-subtle {
+    background-color: #f3e8ff;
+}
+
+.text-purple {
+    color: #9333ea;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    /* Primary blue */
+    border-color: #0d6efd;
+}
+
+/* Ensure nice input groups for password visibility toggle */
+.input-group .btn {
+    z-index: 0;
+}

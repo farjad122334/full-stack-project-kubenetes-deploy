@@ -1,0 +1,196 @@
+<div class="modal-backdrop fade show" style="background-color: rgba(0,0,0,0.5); z-index: 10500;"></div>
+<div class="modal fade show d-block" tabindex="-1" style="z-index: 10501;">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+            <div class="modal-header border-bottom-0 bg-light p-4">
+                <h5 class="modal-title fw-bold">Rate Your Experience</h5>
+                <button type="button" class="btn-close" (click)="close.emit()" [disabled]="isSubmitting"></button>
+            </div>
+
+            <div class="modal-body p-4 position-relative">
+                <div *ngIf="isLoading" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-3 text-muted">Loading tour details...</p>
+                </div>
+
+                <div *ngIf="error" class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+
+                <ng-container *ngIf="!isLoading && entityData">
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="fw-bold text-primary">{{ currentStepName }}</small>
+                            <small class="text-muted">Step {{ currentStepIndex + 1 }} of {{ steps.length }}</small>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar"
+                                [style.width]="((currentStepIndex + 1) / steps.length) * 100 + '%'"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Tour Rating -->
+                    <div *ngIf="currentStepName === 'Tour'" class="fade-in">
+                        <h6 class="fw-bold mb-3 text-primary">Tour: {{ entityData.tourTitle }}</h6>
+
+                        <div class="rating-row">
+                            <label>Tour Management</label>
+                            <div class="stars">
+                                <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                    [ngClass]="tourRating.management >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                    (click)="setRating(tourRating, 'management', star)"></i>
+                            </div>
+                        </div>
+
+                        <div class="rating-row">
+                            <label>Pricing & Value</label>
+                            <div class="stars">
+                                <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                    [ngClass]="tourRating.pricing >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                    (click)="setRating(tourRating, 'pricing', star)"></i>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="rating-row">
+                            <label class="fw-bold">Overall Tour Rating</label>
+                            <div class="stars">
+                                <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-3 cursor-pointer"
+                                    [ngClass]="tourRating.overall >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                    (click)="setRating(tourRating, 'overall', star)"></i>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label text-muted small">Any comments about the tour?</label>
+                            <textarea class="form-control" rows="2" [(ngModel)]="tourRating.comment"
+                                placeholder="Tell us what you liked or how we can improve..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Transport/Driver Rating -->
+                    <div *ngIf="currentStepName === 'Transport'" class="fade-in">
+                        <ng-container *ngFor="let driver of entityData.drivers">
+                            <h6 class="fw-bold mb-3 text-primary">Transport By: {{ driver.name }}</h6>
+
+                            <div class="rating-row">
+                                <label>Vehicle Condition</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                        [ngClass]="driverRatings[driver.driverId].vehicle >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(driverRatings[driver.driverId], 'vehicle', star)"></i>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <label>Comfort</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                        [ngClass]="driverRatings[driver.driverId].comfort >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(driverRatings[driver.driverId], 'comfort', star)"></i>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <label>Driver Behaviour</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                        [ngClass]="driverRatings[driver.driverId].behavior >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(driverRatings[driver.driverId], 'behavior', star)"></i>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <div class="rating-row">
+                                <label class="fw-bold">Overall Transport Rating</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-3 cursor-pointer"
+                                        [ngClass]="driverRatings[driver.driverId].overall >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(driverRatings[driver.driverId], 'overall', star)"></i>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 mb-4">
+                                <label class="form-label text-muted small">Comments for {{ driver.name }}?</label>
+                                <textarea class="form-control" rows="2"
+                                    [(ngModel)]="driverRatings[driver.driverId].comment"
+                                    placeholder="How was the ride?"></textarea>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <!-- Step 3: Accommodation/Restaurant Rating -->
+                    <div *ngIf="currentStepName === 'Accommodation'" class="fade-in">
+                        <ng-container *ngFor="let rest of entityData.restaurants; let isLast = last">
+                            <h6 class="fw-bold mb-3 text-primary">{{ rest.type | titlecase }} By: {{ rest.name }}</h6>
+
+                            <div class="rating-row">
+                                <label>Accommodation/Food Quality</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                        [ngClass]="restaurantRatings[rest.restaurantId].accommodation >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(restaurantRatings[rest.restaurantId], 'accommodation', star)"></i>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <label>Service Quality</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                        [ngClass]="restaurantRatings[rest.restaurantId].service >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(restaurantRatings[rest.restaurantId], 'service', star)"></i>
+                                </div>
+                            </div>
+
+                            <div class="rating-row">
+                                <label>Staff Behaviour</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-4 cursor-pointer"
+                                        [ngClass]="restaurantRatings[rest.restaurantId].staff >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(restaurantRatings[rest.restaurantId], 'staff', star)"></i>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <div class="rating-row">
+                                <label class="fw-bold">Overall Experience</label>
+                                <div class="stars">
+                                    <i *ngFor="let star of [1,2,3,4,5]" class="bi fs-3 cursor-pointer"
+                                        [ngClass]="restaurantRatings[rest.restaurantId].overall >= star ? 'bi-star-fill text-warning' : 'bi-star text-muted'"
+                                        (click)="setRating(restaurantRatings[rest.restaurantId], 'overall', star)"></i>
+                                </div>
+                            </div>
+
+                            <div class="mt-3" [class.mb-4]="!isLast">
+                                <label class="form-label text-muted small">Comments for {{ rest.name }}?</label>
+                                <textarea class="form-control" rows="2"
+                                    [(ngModel)]="restaurantRatings[rest.restaurantId].comment"
+                                    placeholder="Did you enjoy your stay/meal?"></textarea>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                </ng-container>
+            </div>
+
+            <div class="modal-footer bg-light p-4" *ngIf="!isLoading && entityData">
+                <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" *ngIf="currentStepIndex > 0"
+                    (click)="prevStep()" [disabled]="isSubmitting">Back</button>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-primary px-4 rounded-pill"
+                        *ngIf="currentStepIndex < steps.length - 1" (click)="nextStep()">Next Stage</button>
+                    <button type="button" class="btn btn-success px-4 rounded-pill"
+                        *ngIf="currentStepIndex === steps.length - 1" (click)="submitRating()"
+                        [disabled]="isSubmitting">
+                        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+                            aria-hidden="true"></span>
+                        Submit Review
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

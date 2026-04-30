@@ -1,0 +1,174 @@
+<div class="container-fluid">
+
+    <!-- Top Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm">
+        <div class="position-relative w-50">
+            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            <input type="text" class="form-control border-0 bg-light ps-5 rounded-pill"
+                placeholder="Search tours, drivers, partners...">
+        </div>
+
+        <div class="d-flex align-items-center gap-4">
+            <div class="position-relative cursor-pointer">
+                <i class="bi bi-bell fs-4 text-teal"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+            </div>
+            <div class="d-flex align-items-center cursor-pointer">
+                <div class="text-end me-3 d-none d-md-block">
+                    <div class="fw-bold text-dark">Admin User</div>
+                    <div class="text-muted small">admin@tourismo.com</div>
+                </div>
+                <div class="avatar bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center"
+                    style="width: 45px; height: 45px;">
+                    <i class="bi bi-person-fill fs-4"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Overview Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">Dashboard Overview</h4>
+        <p class="text-muted">Welcome back! Here's what's happening today.</p>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="row g-4 mb-4">
+        <!-- Total Tours -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-3 cursor-pointer stat-card" routerLink="/admin/manage-tours">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <div class="text-muted mb-1 text-uppercase small tracking-wider">Total Tours</div>
+                        <h2 class="fw-bold mb-0">{{stats.totalTours}}</h2>
+                    </div>
+                    <div class="icon-box bg-teal text-white rounded-3 d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="bi bi-geo-alt fs-4"></i>
+                    </div>
+                </div>
+                <div class="text-success small fw-bold">
+                    <i class="bi bi-arrow-up-short"></i> Active & Drafts
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Drivers -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-3 cursor-pointer stat-card" routerLink="/admin/manage-drivers">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <div class="text-muted mb-1 text-uppercase small tracking-wider">Registered Drivers</div>
+                        <h2 class="fw-bold mb-0">{{stats.totalDrivers}}</h2>
+                    </div>
+                    <div class="icon-box bg-primary text-white rounded-3 d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="bi bi-car-front fs-4"></i>
+                    </div>
+                </div>
+                <div class="text-success small fw-bold">
+                    <i class="bi bi-arrow-up-short"></i> Verified Fleet
+                </div>
+            </div>
+        </div>
+
+        <!-- Restaurants/Hotels -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-3 cursor-pointer stat-card" routerLink="/admin/manage-restaurants">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <div class="text-muted mb-1 text-uppercase small tracking-wider">Partners</div>
+                        <h2 class="fw-bold mb-0">{{stats.totalPartners}}</h2>
+                    </div>
+                    <div class="icon-box bg-orange text-white rounded-3 d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="bi bi-egg-fried fs-4"></i>
+                    </div>
+                </div>
+                <div class="text-success small fw-bold">
+                    <i class="bi bi-arrow-up-short"></i> Hotels & Food
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Documents -->
+        <div class="col-md-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-3 cursor-pointer stat-card" routerLink="/admin/manage-drivers" [queryParams]="{filter: 'pending'}">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <div class="text-muted mb-1 text-uppercase small tracking-wider">Pending Tasks</div>
+                        <h2 class="fw-bold mb-0">{{stats.pendingVerifications}}</h2>
+                    </div>
+                    <div class="icon-box bg-purple text-white rounded-3 d-flex align-items-center justify-content-center"
+                        style="width: 50px; height: 50px;">
+                        <i class="bi bi-file-earmark-text fs-4"></i>
+                    </div>
+                </div>
+                <div class="text-danger small fw-bold">
+                    <i class="bi bi-exclamation-circle"></i> Requires Attention
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-4">Tours Trend</h5>
+                    <div style="height: 300px;">
+                        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="'line'">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-4">Monthly Revenue</h5>
+                    <div style="height: 300px;">
+                        <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Tours Table -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-4">Recent Tours</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="text-muted small text-uppercase">
+                        <tr>
+                            <th class="fw-bold border-0">Tour ID</th>
+                            <th class="fw-bold border-0">Destination</th>
+                            <th class="fw-bold border-0">Client</th>
+                            <th class="fw-bold border-0">Status</th>
+                            <th class="fw-bold border-0 text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let tour of recentTours" class="border-light-subtle">
+                            <td class="py-3">{{tour.id}}</td>
+                            <td class="py-3 fw-medium">{{tour.destination}}</td>
+                            <td class="py-3 text-muted">{{tour.client}}</td>
+                            <td class="py-3">
+                                <span class="badge rounded-pill px-3 py-2 fw-normal"
+                                    [className]="'badge ' + tour.statusClass">
+                                    {{tour.status}}
+                                </span>
+                            </td>
+                            <td class="py-3 text-end fw-bold">{{tour.amount}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,140 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-dark">Earnings</h2>
+            <p class="text-muted">Track your income and payment history</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <button class="btn btn-primary shadow-sm" (click)="viewStripeDashboard()" [disabled]="isDashboardLoading">
+                <i class="bi bi-stripe me-2"></i>
+                {{ isDashboardLoading ? 'Loading Dashboard...' : 'View Stripe Dashboard' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-5">
+        <!-- Total Earnings -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 bg-success-subtle-custom">
+                <div class="card-body p-4 position-relative">
+                    <div class="text-muted small mb-1">Total Earnings</div>
+                    <h2 class="fw-bold mb-2 text-dark">{{ stats.totalEarnings | number }} PKR</h2>
+                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-1 small">
+                        <i class="bi bi-graph-up-arrow me-1"></i> Lifetime
+                    </span>
+                    <div
+                        class="position-absolute top-0 end-0 mt-4 me-4 bg-success text-white rounded px-2 py-1 shadow-sm">
+                        <span class="fs-4">₨</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Paid Amount -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4 position-relative">
+                    <div class="text-muted small mb-1">Paid Amount</div>
+                    <h2 class="fw-bold mb-2 text-dark">{{ stats.paidAmount | number }} PKR</h2>
+                    <span class="text-success small">Received in account</span>
+                    <div
+                        class="position-absolute top-0 end-0 mt-4 me-4 bg-primary text-white rounded px-2 py-1 shadow-sm">
+                        <i class="bi bi-check-circle fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pending Payments -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4 position-relative">
+                    <div class="text-muted small mb-1">Pending Payments</div>
+                    <h2 class="fw-bold mb-2 text-dark">{{ stats.pendingPayments | number }} PKR</h2>
+                    <span class="text-warning small">Awaiting clearance</span>
+                    <div
+                        class="position-absolute top-0 end-0 mt-4 me-4 bg-warning text-white rounded px-2 py-1 shadow-sm">
+                        <i class="bi bi-clock fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-normal mb-4">Monthly Earnings Overview</h5>
+                    <div style="height: 300px;">
+                        <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="barChartType">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-normal mb-4">Earnings Trend</h5>
+                    <div style="height: 300px;">
+                        <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="fw-normal mb-4">Payment History</h5>
+
+                    <div *ngIf="isLoading" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Loading history...</p>
+                    </div>
+
+                    <div *ngIf="!isLoading && paymentHistory.length === 0" class="text-center py-4">
+                        <p class="text-muted">No payment history found.</p>
+                    </div>
+
+                    <div *ngIf="!isLoading" class="history-list">
+                        <div *ngFor="let payment of paymentHistory"
+                            class="card border-0 bg-light-subtle mb-3 p-3 hover-shadow transition-all">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded p-2 me-3"
+                                        [ngClass]="payment.status === 'Paid' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'">
+                                        <i class="bi"
+                                            [ngClass]="payment.status === 'Paid' ? 'bi-check-circle' : 'bi-clock'"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-medium">{{ payment.title }}</h6>
+                                        <div class="text-muted small">
+                                            <i class="bi bi-calendar3 me-1"></i> {{ payment.date | date:'mediumDate' }}
+                                            <span class="mx-2">•</span>
+                                            {{ payment.method }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="fw-bold mb-1">{{ payment.amount | number }} PKR</h6>
+                                    <span class="badge rounded-pill"
+                                        [ngClass]="payment.status === 'Paid' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning-emphasis'">
+                                        {{ payment.status }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

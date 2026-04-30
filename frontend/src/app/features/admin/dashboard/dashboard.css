@@ -1,0 +1,43 @@
+/* Custom Colors for Stats Cards */
+.bg-teal {
+    background-color: #00bfa5 !important;
+}
+
+.text-teal {
+    color: #00bfa5 !important;
+}
+
+.bg-orange {
+    background-color: #fd7e14 !important;
+}
+
+.bg-purple {
+    background-color: #6f42c1 !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Card Improvements */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Search Input Focus */
+.form-control:focus {
+    box-shadow: none;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+/* Table Badge Tweaks */
+.badge {
+    font-size: 0.85em;
+    font-weight: 500;
+}

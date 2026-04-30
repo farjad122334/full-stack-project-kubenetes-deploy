@@ -1,0 +1,82 @@
+.card {
+    border-radius: 12px;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: #334155;
+    background-color: white;
+}
+
+.form-control:focus,
+.form-select:focus {
+    box-shadow: none;
+    border-color: #1a73e8;
+}
+
+.btn-primary {
+    background-color: #1a73e8;
+    border-color: #1a73e8;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+}
+
+.btn-primary:hover {
+    background-color: #1557b0;
+    border-color: #1557b0;
+}
+
+/* Danger Zone Styling */
+.card.border-danger {
+    border: 1px solid #ffcdd2 !important;
+    background-color: #ffebee !important;
+}
+
+.text-danger {
+    color: #d32f2f !important;
+}
+
+.bg-danger {
+    background-color: #d32f2f !important;
+}
+
+.btn-danger {
+    background-color: #d32f2f;
+    border-color: #d32f2f;
+}
+
+.btn-outline-danger {
+    color: #d32f2f;
+    border-color: #d32f2f;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ffebee;
+    color: #b71c1c;
+    border-color: #b71c1c;
+}
+
+label.form-label {
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.form-check-input {
+    width: 3em;
+    height: 1.5em;
+    cursor: pointer;
+}
+
+.form-check-input:checked {
+    background-color: #1a73e8;
+    border-color: #1a73e8;
+}
+
+.form-check-input:focus {
+    box-shadow: none;
+    border-color: #1a73e8;
+}

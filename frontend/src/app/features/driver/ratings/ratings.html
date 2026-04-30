@@ -1,0 +1,133 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark">Ratings & Reviews</h2>
+            <p class="text-muted">See what customers are saying about your service</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="text-muted mt-3">Loading your reviews...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="alert alert-danger">{{ error }}</div>
+
+    <!-- Content -->
+    <ng-container *ngIf="!isLoading && !error">
+
+        <!-- Rating Summary Cards -->
+        <div class="row g-4 mb-5">
+            <!-- Overall Rating -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-warning-subtle-custom">
+                    <div class="card-body p-4 text-center d-flex flex-column justify-content-center align-items-center">
+                        <div class="display-3 fw-bold text-dark mb-2">
+                            <i class="bi bi-star-fill text-warning fs-header"></i>
+                            {{ overallRating > 0 ? overallRating.toFixed(1) : 'N/A' }}
+                        </div>
+                        <div class="mb-3">
+                            <i *ngFor="let s of getStarsArray(5)" class="bi mx-1 fs-5"
+                                [ngClass]="s <= overallRating ? 'bi-star-fill text-warning' : 'bi-star text-muted opacity-50'">
+                            </i>
+                        </div>
+                        <div class="text-muted mb-2">Based on {{ totalReviews }} reviews</div>
+                        <div *ngIf="totalReviews === 0" class="text-muted small fst-italic">No reviews yet. Complete
+                            more tours to start getting feedback!</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rating Breakdown -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-normal mb-4">Rating Breakdown</h5>
+                        <div *ngFor="let item of ratingBreakdown" class="d-flex align-items-center mb-3">
+                            <div class="d-flex align-items-center me-3" style="width: 40px;">
+                                <span class="text-muted small me-1">{{ item.stars }}</span>
+                                <i class="bi bi-star-fill text-warning small"></i>
+                            </div>
+                            <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar"
+                                    [style.width.%]="item.percentage"></div>
+                            </div>
+                            <div class="text-muted small text-end" style="width: 30px;">{{ item.count }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Metrics -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-normal mb-4">Detailed Metrics</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <span class="text-muted"><i class="bi bi-car-front text-info me-2"></i>Vehicle
+                                Condition</span>
+                            <span class="fw-bold">{{ averageVehicle.toFixed(1) }}/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <span class="text-muted"><i class="bi bi-emoji-smile text-success me-2"></i>Ride
+                                Comfort</span>
+                            <span class="fw-bold">{{ averageComfort.toFixed(1) }}/5</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted"><i
+                                    class="bi bi-person-check text-warning me-2"></i>Behaviour</span>
+                            <span class="fw-bold">{{ averageBehaviour.toFixed(1) }}/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Reviews -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <h5 class="fw-normal">Customer Reviews</h5>
+            </div>
+        </div>
+
+        <!-- Empty Reviews -->
+        <div *ngIf="reviews.length === 0" class="text-center py-5 text-muted">
+            <i class="bi bi-chat-square-text fs-1 mb-3 d-block opacity-50"></i>
+            <h5>No reviews yet</h5>
+            <p>Complete more tours to start receiving tourist feedback!</p>
+        </div>
+
+        <!-- Reviews List -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div *ngFor="let review of reviews" class="card border-0 shadow-sm mb-3">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="fw-bold mb-0 d-inline-block me-2">{{ review.touristName }}</h6>
+                                <i *ngFor="let s of getStarsArray(5)" class="bi small"
+                                    [ngClass]="s <= review.overallStars ? 'bi-star-fill text-warning' : 'bi-star text-muted opacity-25'">
+                                </i>
+                            </div>
+                            <small class="text-muted">{{ review.date | date:'mediumDate' }}</small>
+                        </div>
+                        <div class="text-primary small mb-2">{{ review.tourName }}</div>
+                        <p class="text-muted mb-3">{{ review.comment || 'No written feedback provided.' }}</p>
+                        <div class="d-flex gap-4">
+                            <small class="text-muted"><i class="bi bi-car-front text-info me-1"></i>Vehicle: {{
+                                review.vehicleStars }}/5</small>
+                            <small class="text-muted"><i class="bi bi-emoji-smile text-success me-1"></i>Comfort: {{
+                                review.comfortStars }}/5</small>
+                            <small class="text-muted"><i class="bi bi-person-check text-warning me-1"></i>Behaviour: {{
+                                review.behaviourStars }}/5</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </ng-container>
+</div>

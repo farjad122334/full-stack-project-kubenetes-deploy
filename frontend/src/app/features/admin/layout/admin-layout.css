@@ -1,0 +1,96 @@
+/* Sidebar Styles */
+.sidebar {
+    transition: all 0.3s ease;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-right: 1px solid #e2e8f0;
+}
+
+.nav-link {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.nav-link:hover {
+    color: #0d6efd !important;
+    background: rgba(13, 110, 253, 0.08);
+}
+
+.active-link {
+    background: rgba(13, 110, 253, 0.08) !important;
+    color: #0d6efd !important;
+    border-left: 3px solid #0d6efd;
+    /* Blue accent */
+    border-radius: 4px 8px 8px 4px;
+}
+
+.btn-teal {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-teal:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.hover-text-danger:hover {
+    color: #ef4444 !important;
+    /* Tailwind red-500 equivalent */
+}
+
+/* Scrollbar for sidebar if needed */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+/* Mobile Sidebar Styling */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1050;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .content-wrapper {
+        padding-top: 60px !important;
+    }
+}

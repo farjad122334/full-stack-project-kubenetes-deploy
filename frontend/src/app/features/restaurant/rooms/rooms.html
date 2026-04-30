@@ -1,0 +1,219 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Manage Rooms</h2>
+            <p class="text-muted mb-0">Manage your accommodation and room categories</p>
+        </div>
+        <button class="btn btn-primary rounded-pill px-4" (click)="openAddModal()">
+            <i class="bi bi-plus-lg me-2"></i> Add Room Category
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-3">Loading room categories...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && roomCategories.length === 0" class="card border-0 shadow-sm rounded-4 text-center py-5">
+        <div class="card-body">
+            <div class="mb-4">
+                <i class="bi bi-door-open text-primary opacity-25" style="font-size: 5rem;"></i>
+            </div>
+            <h4 class="fw-bold text-dark mb-2">No Room Categories Yet</h4>
+            <p class="text-muted mb-4 max-w-md mx-auto">
+                Start by adding your room categories such as Single, Double, or Deluxe rooms to receive accommodation
+                requests.
+            </p>
+            <button class="btn btn-primary rounded-pill px-4" (click)="openAddModal()">
+                <i class="bi bi-plus-lg me-2"></i> Add Your First Category
+            </button>
+        </div>
+    </div>
+
+    <!-- Room Categories Grid -->
+    <div *ngIf="!loading && roomCategories.length > 0" class="row g-4">
+        <div *ngFor="let category of roomCategories" class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 room-card">
+                <!-- Image -->
+                <div class="position-relative">
+                    <img [src]="getPrimaryImage(category)" class="card-img-top rounded-top-4"
+                        alt="{{category.categoryName}}" style="height: 200px; object-fit: cover;">
+                    <span class="badge bg-primary position-absolute top-0 end-0 m-3 px-3 py-2">
+                        PKR {{category.pricePerNight | number}}/night
+                    </span>
+                </div>
+
+                <!-- Content -->
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-2">{{category.categoryName}}</h5>
+                    <p class="text-muted small mb-3" *ngIf="category.description">{{category.description}}</p>
+
+                    <!-- Stats -->
+                    <div class="d-flex gap-3 mb-3 text-secondary small">
+                        <div>
+                            <i class="bi bi-people me-1"></i>
+                            <span>{{category.maxGuests}} Guests</span>
+                        </div>
+                        <div>
+                            <i class="bi bi-door-closed me-1"></i>
+                            <span>{{category.totalRooms}} Rooms</span>
+                        </div>
+                    </div>
+
+                    <!-- Amenities -->
+                    <div *ngIf="category.amenitiesArray && category.amenitiesArray.length > 0" class="mb-3">
+                        <div class="d-flex flex-wrap gap-2">
+                            <span *ngFor="let amenity of category.amenitiesArray.slice(0, 3)"
+                                class="badge bg-light text-dark border">
+                                {{amenity}}
+                            </span>
+                            <span *ngIf="category.amenitiesArray.length > 3" class="badge bg-light text-dark border">
+                                +{{category.amenitiesArray.length - 3}} more
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Availability -->
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            {{category.availableRooms}} of {{category.totalRooms}} available
+                        </small>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm flex-grow-1" (click)="openEditModal(category)">
+                            <i class="bi bi-pencil me-1"></i> Edit
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete(category)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal fade show d-block" *ngIf="showModal" tabindex="-1"
+        style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1100; overflow-y: auto;">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="modal-title fw-bold text-dark pe-5">{{isEditMode ? 'Edit' : 'Add'}} Room Category</h5>
+                    <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close" style="z-index: 1101;"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form>
+                        <!-- Category Name -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" [(ngModel)]="formData.categoryName"
+                                name="categoryName" placeholder="e.g., Deluxe Suite, Standard Room">
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" rows="3" [(ngModel)]="formData.description"
+                                name="description" placeholder="Describe the room category..."></textarea>
+                        </div>
+
+                        <!-- Price and Guests -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Price Per Night (PKR) <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" class="form-control" [(ngModel)]="formData.pricePerNight"
+                                    name="pricePerNight" min="0" placeholder="5000">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Max Guests <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" [(ngModel)]="formData.maxGuests"
+                                    name="maxGuests" min="1" placeholder="2">
+                            </div>
+                        </div>
+
+                        <!-- Total Rooms -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Total Rooms <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" [(ngModel)]="formData.totalRooms"
+                                name="totalRooms" min="1" placeholder="10">
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Amenities</label>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" [(ngModel)]="newAmenity" name="newAmenity"
+                                    placeholder="e.g., WiFi, AC, TV" (keyup.enter)="addAmenity()">
+                                <button class="btn btn-outline-primary" type="button" (click)="addAmenity()">
+                                    <i class="bi bi-plus-lg"></i> Add
+                                </button>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2"
+                                *ngIf="formData.amenities && formData.amenities.length > 0">
+                                <span *ngFor="let amenity of formData.amenities" class="badge bg-primary px-3 py-2">
+                                    {{amenity}}
+                                    <i class="bi bi-x-circle ms-2" style="cursor: pointer;"
+                                        (click)="removeAmenity(amenity)"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Images -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Images
+                                <span class="text-danger" *ngIf="!isEditMode">*</span>
+                                <small class="text-muted">({{isEditMode ? 'Upload additional images' : 'At least 1
+                                    required'}})</small>
+                            </label>
+                            <app-image-uploader [existingImages]="existingImages"
+                                (imagesSelected)="onImagesSelected($event)" (imageDeleted)="onImageDeleted($event)">
+                            </app-image-uploader>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" (click)="saveRoomCategory()">
+                        <i class="bi bi-check-lg me-1"></i> {{isEditMode ? 'Update' : 'Create'}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade show d-block" *ngIf="showDeleteModal" tabindex="-1"
+        style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1050;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold text-danger">
+                        <i class="bi bi-exclamation-triangle me-2"></i> Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to delete <strong>{{categoryToDelete?.categoryName}}</strong>?
+                    </p>
+                    <p class="text-muted small mb-0 mt-2">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+                    <button type="button" class="btn btn-danger" (click)="deleteRoomCategory()">
+                        <i class="bi bi-trash me-1"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Rate your Experience ⭐</h5>
+                <button type="button" class="btn-close" (click)="close.emit()"></button>
+            </div>
+            <div class="modal-body pt-4">
+                <div class="text-center mb-4">
+                    <h6 class="text-muted mb-3">How was your tour?</h6>
+                    <div class="d-flex justify-content-center gap-2">
+                        <i *ngFor="let star of stars; let i = index" class="bi fs-2 cursor-pointer transition-all"
+                            [class.bi-star-fill]="i < rating" [class.bi-star]="i >= rating"
+                            [class.text-warning]="i < rating" [class.text-muted]="i >= rating"
+                            (click)="setRating(i + 1)" style="cursor: pointer; transition: transform 0.2s;"
+                            [style.transform]="i < rating ? 'scale(1.1)' : 'scale(1)'">
+                        </i>
+                    </div>
+                    <p class="mt-2 fw-medium" [ngClass]="{'text-warning': rating > 0, 'text-muted': rating === 0}">
+                        {{ getRatingLabel() }}
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label small text-muted fw-bold text-uppercase">Your Review</label>
+                    <textarea class="form-control bg-light border-0" rows="4" [(ngModel)]="comment"
+                        placeholder="Share your experience with us... (optional)"></textarea>
+                </div>
+
+                <div *ngIf="error" class="alert alert-danger mt-3 py-2 small">
+                    {{ error }}
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" (click)="close.emit()">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4"
+                    [disabled]="rating === 0 || isSubmitting" (click)="submit()">
+                    <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+                    Submit Review
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

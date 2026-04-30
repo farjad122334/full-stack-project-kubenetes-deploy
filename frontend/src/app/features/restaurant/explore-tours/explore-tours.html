@@ -1,0 +1,116 @@
+<div class="container-fluid dashboard-container">
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark section-title mb-1">
+            Explore Tours
+        </h2>
+        <p class="text-muted mb-0">Browse available tours and send your food service offers</p>
+    </div>
+
+    <!-- Tours Grid -->
+    <div class="row g-4">
+        <div class="col-md-6 col-xl-4" *ngFor="let tour of tours">
+            <div class="card tour-card h-100 border-0 shadow-sm overflow-hidden">
+                <!-- Card Header -->
+                <div class="card-header bg-primary text-white p-4 border-0">
+                    <h5 class="fw-bold mb-2">{{tour.title}}</h5>
+                    <p class="mb-0 text-white-50 small" style="line-height: 1.4;">{{tour.description}}</p>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <!-- Date & Duration -->
+                        <div class="d-flex align-items-center text-secondary">
+                            <i class="bi bi-calendar-event me-3 fs-5"></i>
+                            <span class="fw-medium">{{tour.startDate}} <span class="mx-2">•</span>
+                                {{tour.duration}}</span>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="d-flex align-items-center text-secondary">
+                            <i class="bi bi-geo-alt me-3 fs-5"></i>
+                            <span class="fw-medium">{{tour.location}}</span>
+                        </div>
+
+                        <!-- Tourists -->
+                        <div class="d-flex align-items-center text-secondary">
+                            <i class="bi bi-people me-3 fs-5"></i>
+                            <span class="fw-medium">{{tour.tourists}} Tourists</span>
+                        </div>
+
+                        <!-- Meal Type -->
+                        <div class="d-flex align-items-center text-secondary">
+                            <i class="bi bi-cup-hot me-3 fs-5"></i>
+                            <span class="fw-medium">{{tour.mealType}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Button -->
+                    <button class="btn btn-primary w-100 fw-bold py-2 rounded-3" (click)="openOfferModal(tour)">
+                        Send Offer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Overlay -->
+<div class="modal-overlay" *ngIf="selectedTour" (click)="closeOfferModal()">
+    <div class="modal-content-wrapper p-4" (click)="$event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-start mb-4">
+            <h4 class="fw-bold text-dark mb-0">Send Food Offer</h4>
+            <button class="btn btn-sm btn-light border-0 text-muted rounded-circle" (click)="closeOfferModal()">
+                <i class="bi bi-x fs-4"></i>
+            </button>
+        </div>
+
+        <!-- Tour Info -->
+        <div class="bg-light rounded-3 p-3 mb-4">
+            <h6 class="fw-bold text-dark mb-2">{{selectedTour.title}}</h6>
+            <div class="d-flex gap-3 text-secondary small">
+                <span><i class="bi bi-people me-1"></i> {{selectedTour.tourists}} tourists</span>
+                <span><i class="bi bi-cup-hot me-1"></i> {{selectedTour.mealType}}</span>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="mb-4">
+            <label class="form-label fw-bold text-dark small">Per-Head Price (PKR)</label>
+            <input type="number" class="form-control form-control-lg" placeholder="Enter price per person"
+                [(ngModel)]="offerPrice">
+        </div>
+
+        <!-- Calculation Box (Visible only when price entered) -->
+        <div class="calculation-box rounded-3 p-3 mb-4" *ngIf="offerPrice">
+            <div class="d-flex justify-content-between mb-2 small text-muted">
+                <span>Per-Head Price:</span>
+                <span class="fw-bold text-dark">PKR {{offerPrice}}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2 small text-muted">
+                <span>Number of Tourists:</span>
+                <span class="fw-bold text-dark">{{selectedTour.tourists}}</span>
+            </div>
+            <div class="border-top my-2"></div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-dark">Total Amount:</span>
+                <span class="fw-bold text-primary fs-5">PKR {{totalAmount | number}}</span>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-3">
+            <button class="btn btn-outline-secondary w-100 fw-bold py-2 rounded-3" (click)="closeOfferModal()">
+                Cancel
+            </button>
+            <button class="btn btn-primary w-100 fw-bold py-2 rounded-3" (click)="submitOffer()"
+                [disabled]="!offerPrice">
+                Submit Offer
+            </button>
+        </div>
+
+    </div>
+</div>

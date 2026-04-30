@@ -1,0 +1,303 @@
+<div class="container-fluid dashboard-container">
+
+    <!-- Header -->
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="fw-bold mb-1">Dashboard</h1>
+            <p class="text-muted mb-0">Welcome back! Here's your tourism activity overview.</p>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-pills mb-4 bg-white p-2 rounded-4 shadow-sm d-inline-flex border">
+        <li class="nav-item">
+            <button class="nav-link px-4 py-2 rounded-3 fw-medium" [class.active]="activeTab === 'overview'"
+                (click)="setTab('overview')">
+                <i class="bi bi-grid-fill me-2"></i>Overview
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link px-4 py-2 rounded-3 fw-medium" [class.active]="activeTab === 'bookings'"
+                (click)="setTab('bookings')">
+                <i class="bi bi-ticket-perforated-fill me-2"></i>My Bookings
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link px-4 py-2 rounded-3 fw-medium" [class.active]="activeTab === 'history'"
+                (click)="setTab('history')">
+                <i class="bi bi-clock-history me-2"></i>Trip History
+            </button>
+        </li>
+    </ul>
+
+    <!-- Overview Content -->
+    <div *ngIf="activeTab === 'overview'" class="fade-in">
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Active Bookings -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-secondary small">Active Bookings</span>
+                        <div class="bg-primary bg-opacity-10 p-2 rounded">
+                            <i class="bi bi-calendar-check text-primary fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats?.activeBookings }}</h2>
+                    <small class="text-muted">Ongoing trips</small>
+                </div>
+            </div>
+
+            <!-- Upcoming Trips -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-secondary small">Upcoming Trips</span>
+                        <div class="bg-success bg-opacity-10 p-2 rounded">
+                            <i class="bi bi-geo-alt text-success fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats?.upcomingTrips }}</h2>
+                    <small class="text-muted">Confirmed tours</small>
+                </div>
+            </div>
+
+            <!-- Completed Trips -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-secondary small">Completed Trips</span>
+                        <div class="bg-purple bg-opacity-10 p-2 rounded"
+                            style="background-color: rgba(111, 66, 193, 0.1);">
+                            <i class="bi bi-check-circle text-purple fs-5" style="color: #6f42c1;"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats?.completedTrips }}</h2>
+                    <small class="text-muted">Total tours done</small>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="card border-0 shadow-sm h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-secondary small">Recent Activity</span>
+                        <div class="bg-warning bg-opacity-10 p-2 rounded">
+                            <i class="bi bi-activity text-warning fs-5"></i>
+                        </div>
+                    </div>
+                    <h2 class="fw-bold mb-1">{{ stats?.newNotifications }}</h2>
+                    <small class="text-muted">New notifications</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Recent Bookings -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div
+                        class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Recent Bookings</h5>
+                        <button class="btn btn-link text-decoration-none" (click)="setTab('bookings')">View All</button>
+                    </div>
+                    <div class="card-body p-4">
+                        <div *ngIf="recentBookings.length === 0" class="text-center py-5 text-muted">
+                            <i class="bi bi-ticket-perforated fs-1"></i>
+                            <p class="mt-2">No bookings found yet.</p>
+                        </div>
+                        <div class="d-flex flex-column gap-3" *ngIf="recentBookings.length > 0">
+                            <div *ngFor="let booking of recentBookings"
+                                class="p-3 bg-light rounded-3 d-flex align-items-center flex-wrap gap-3">
+                                <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style="width: 48px; height: 48px;">
+                                    <i class="bi bi-geo-alt-fill fs-5"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="fw-bold mb-1">{{ booking.tourName }}</h6>
+                                    <div class="text-secondary small">{{ booking.location }}</div>
+                                    <div class="text-muted small mt-1">
+                                        <i class="bi bi-clock me-1"></i> {{ booking.date }} &nbsp; {{ booking.persons }}
+                                        persons
+                                    </div>
+                                </div>
+                                <div class="ms-auto" [ngClass]="{
+                                    'bg-success-subtle text-success': booking.status === 'Confirmed',
+                                    'bg-warning-subtle text-warning': booking.status === 'Pending',
+                                    'bg-info-subtle text-info': booking.status === 'Completed',
+                                    'bg-danger-subtle text-danger': booking.status === 'Cancelled'
+                                }" class="badge rounded-pill px-3 py-2 fw-normal border">
+                                    {{ booking.status }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Trips Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                        <h5 class="mb-0 fw-bold d-flex align-items-center">
+                            <i class="bi bi-graph-up-arrow text-primary me-2"></i> Upcoming Trips
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div *ngIf="upcomingTrips.length === 0" class="text-center py-4 text-muted">
+                            <p>No confirmed upcoming trips.</p>
+                        </div>
+                        <div class="d-flex flex-column gap-3" *ngIf="upcomingTrips.length > 0">
+                            <div *ngFor="let trip of upcomingTrips" class="border rounded-3 p-3">
+                                <h6 class="fw-bold mb-3">{{ trip.name }}</h6>
+                                <div class="d-flex flex-column gap-2 text-secondary small">
+                                    <div><i class="bi bi-geo-alt text-primary me-2"></i> {{ trip.location }}</div>
+                                    <div><i class="bi bi-calendar text-success me-2"></i> {{ trip.date }}</div>
+                                    <div><i class="bi bi-clock text-warning me-2"></i> {{ trip.duration }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary w-100 mt-3" (click)="setTab('bookings')">View All
+                            Trips</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Bookings Tab -->
+    <div *ngIf="activeTab === 'bookings'" class="fade-in">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-bottom p-4">
+                <h5 class="mb-0 fw-bold">My Tour Bookings</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="px-4 py-3 border-0">Tour Name</th>
+                                <th class="py-3 border-0 text-center">Persons</th>
+                                <th class="py-3 border-0">Booking Date</th>
+                                <th class="py-3 border-0">Total Amount</th>
+                                <th class="py-3 border-0">Status</th>
+                                <th class="px-4 py-3 border-0 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="activeBookings.length === 0">
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    No tours booked yet. Start exploring and book your first tour!
+                                </td>
+                            </tr>
+                            <tr *ngFor="let booking of activeBookings">
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">{{ booking.tourName }}</div>
+                                            <div class="text-muted small">{{ booking.location }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center py-3">
+                                    <span class="badge bg-light text-dark border">{{ booking.persons }}</span>
+                                </td>
+                                <td class="py-3">
+                                    <div class="small">{{ booking.date }}</div>
+                                </td>
+                                <td class="py-3 fw-bold text-primary">
+                                    PKR {{ booking.totalAmount | number }}
+                                </td>
+                                <td class="py-3">
+                                    <span class="badge rounded-pill px-3 py-2 fw-normal border" [ngClass]="{
+                                        'bg-success-subtle text-success border-success-subtle': booking.status === 'Confirmed',
+                                        'bg-warning-subtle text-warning border-warning-subtle': booking.status === 'Pending',
+                                        'bg-info-subtle text-info border-info-subtle': booking.status === 'Completed',
+                                        'bg-danger-subtle text-danger border-danger-subtle': booking.status === 'Cancelled'
+                                    }">
+                                        {{ booking.status }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-end">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                        [routerLink]="['/tourist/tour-details', booking.tourId]">
+                                        View Tour
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trip History Tab -->
+    <div *ngIf="activeTab === 'history'" class="fade-in">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-bottom p-4">
+                <h5 class="mb-0 fw-bold">My Trip History</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="px-4 py-3 border-0">Tour Name</th>
+                                <th class="py-3 border-0 text-center">Persons</th>
+                                <th class="py-3 border-0">Travel Date</th>
+                                <th class="py-3 border-0">Total Spent</th>
+                                <th class="py-3 border-0">Status</th>
+                                <th class="px-4 py-3 border-0 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="completedBookings.length === 0">
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    No trip history found. Once you complete a tour, it will appear here!
+                                </td>
+                            </tr>
+                            <tr *ngFor="let trip of completedBookings">
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-success bg-opacity-10 text-success p-2 rounded-3">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">{{ trip.tourName }}</div>
+                                            <div class="text-muted small">{{ trip.location }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center py-3">
+                                    <span class="badge bg-light text-dark border">{{ trip.persons }}</span>
+                                </td>
+                                <td class="py-3">
+                                    <div class="small">{{ trip.startDate }}</div>
+                                </td>
+                                <td class="py-3 fw-bold text-success">
+                                    PKR {{ trip.totalAmount | number }}
+                                </td>
+                                <td class="py-3">
+                                    <span
+                                        class="badge bg-info-subtle text-info border-info-subtle rounded-pill px-3 py-2 fw-normal">
+                                        Completed
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-end">
+                                    <button class="btn btn-sm btn-outline-success rounded-pill px-3"
+                                        [routerLink]="['/tourist/tour-details', trip.tourId]">
+                                        View Memories
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,281 @@
+<div class="container-fluid dashboard-container">
+
+    <!-- Header & Tabs -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark section-title mb-1">
+                Dashboard
+            </h2>
+            <p class="text-muted mb-0">Welcome back! Here's your activity summary</p>
+        </div>
+
+        <ul class="nav nav-pills custom-tabs shadow-sm rounded-pill p-1 bg-white">
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4 fw-medium" [class.active]="activeTab === 'overview'"
+                    (click)="setTab('overview')">
+                    <i class="bi bi-grid-fill me-2"></i> Overview
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link rounded-pill px-4 fw-medium" [class.active]="activeTab === 'ratings'"
+                    (click)="setTab('ratings')">
+                    <i class="bi bi-star-fill me-2"></i> Ratings & Reviews
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- OVERVIEW TAB CONTENT -->
+    <div *ngIf="activeTab === 'overview'" class="fade-in">
+        <div class="row mb-4">
+            <div class="col-12">
+                <!-- Stripe Payout Setup Alert -->
+                <div *ngIf="!payoutsEnabled" class="alert alert-primary border-0 shadow-sm rounded-4 mb-3" role="alert"
+                    style="background: linear-gradient(135deg, #f0f7ff 0%, #e1effe 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-box bg-primary text-white me-3 rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 45px; height: 45px;">
+                            <i class="bi bi-wallet2 fs-5"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="alert-heading fw-bold mb-1 text-primary">Setup Your Payout Account</h6>
+                            <p class="mb-0 text-muted small">To receive payments for your orders, you must link your bank
+                                account via Stripe.</p>
+                        </div>
+                        <button (click)="setupStripeOnboarding()" class="btn btn-primary rounded-pill px-4 ms-3"
+                            [disabled]="isStripeLoading">
+                            <span *ngIf="isStripeLoading" class="spinner-border spinner-border-sm me-2"></span>
+                            {{ stripeAccountId ? 'Complete Setup' : 'Link Bank Account' }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Validation Alert (For Restaurant & Hotel) -->
+                <div *ngIf="showMenuAlert() && !hasMenuItems"
+                    class="alert alert-warning border-0 shadow-sm rounded-4 mb-3" role="alert">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3 text-warning"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="alert-heading fw-bold mb-2">Setup Your Menu</h6>
+                            <p class="mb-2">You need to add menu items to start receiving and submitting offers on meal
+                                requirements.</p>
+                            <a routerLink="/restaurant/menu" class="btn btn-warning btn-sm">
+                                <i class="bi bi-book me-1"></i> Setup My Menu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rooms Validation Alert (For Guest House & Hotel) -->
+                <div *ngIf="showRoomsAlert() && !hasRooms" class="alert alert-info border-0 shadow-sm rounded-4 mb-3"
+                    role="alert">
+                    <div class="d-flex align-items-start">
+                        <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
+                        <div class="flex-grow-1">
+                            <h6 class="alert-heading fw-bold mb-2">Setup Your Rooms</h6>
+                            <p class="mb-2">You haven't setup any rooms yet. Please setup your room categories to
+                                receive
+                                accommodation requests.</p>
+                            <a routerLink="/restaurant/rooms" class="btn btn-info btn-sm text-white">
+                                <i class="bi bi-door-open me-1"></i> Setup My Rooms
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-xl-3" *ngFor="let stat of stats">
+                <div class="card stat-card shadow-sm h-100 p-4 border-0">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="w-100">
+                            <small class="text-secondary fw-medium d-block mb-1">{{stat.title}}</small>
+                            <h2 class="fw-bold text-dark mb-1">{{stat.count}}</h2>
+                            <small class="text-muted" style="font-size: 0.8rem;">{{stat.subtext}}</small>
+                        </div>
+                        <div class="stat-icon-wrapper rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                            [ngClass]="'bg-' + stat.colorClass">
+                            <i class="bi {{stat.icon}} text-white fs-5"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- Recent Activity Section -->
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-header bg-white border-0 py-4 px-4">
+                        <h5 class="mb-0 fw-bold text-dark">Recent Activity</h5>
+                    </div>
+                    <div class="card-body px-0 pt-0 pb-2">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <tbody class="border-top-0">
+                                    <tr *ngFor="let activity of recentActivities" class="activity-row">
+                                        <td class="ps-4" style="width: 50px;">
+                                            <div class="activity-dot"></div>
+                                        </td>
+                                        <td>
+                                            <h6 class="fw-bold text-dark mb-1">{{activity.tourName}}</h6>
+                                            <small class="text-muted d-block">{{activity.status}}</small>
+                                            <small class="text-muted mt-1 d-block"
+                                                style="font-size: 0.75rem;">{{activity.time}}</small>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="fw-bold text-dark mb-1">PKR {{activity.price | number}}</div>
+                                            <span class="badge rounded-pill border px-3"
+                                                [ngClass]="getBadgeClass(activity.badgeStatus)">
+                                                {{activity.badgeStatus}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="recentActivities.length === 0">
+                                        <td colspan="3" class="text-center py-5 text-muted">
+                                            <i class="bi bi-activity fs-1 mb-2 d-block opacity-25"></i>
+                                            <p class="mb-0">No recent activity found.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card action-card border-0 shadow-sm rounded-4 h-100 bg-primary">
+                    <div class="card-body p-4 d-flex flex-column justify-content-center">
+                        <h5 class="fw-bold text-white mb-2">Explore New Tours</h5>
+                        <p class="text-white-50 mb-4">Find available tours and send your food offers</p>
+                        <div>
+                            <button class="btn btn-light fw-bold text-primary rounded-pill px-4">Browse Tours</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card action-card border-0 shadow-sm rounded-4 h-100 bg-purple">
+                    <div class="card-body p-4 d-flex flex-column justify-content-center">
+                        <h5 class="fw-bold text-white mb-2">Manage Your Menu</h5>
+                        <p class="text-white-50 mb-4">Update your menu items and pricing</p>
+                        <div>
+                            <button class="btn btn-light fw-bold text-purple rounded-pill px-4">Go to Menu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- End Overview Tab -->
+
+    <!-- RATINGS & REVIEWS TAB CONTENT -->
+    <div *ngIf="activeTab === 'ratings'" class="fade-in">
+
+        <div *ngIf="isLoadingRatings" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-2">Loading performance data...</p>
+        </div>
+
+        <div *ngIf="!isLoadingRatings">
+            <!-- Summary Stats -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-3">
+                    <div
+                        class="card bg-primary text-white border-0 shadow-sm h-100 p-4 text-center rounded-4 custom-gradient-primary">
+                        <h5 class="mb-1 opacity-75">Overall Score</h5>
+                        <h1 class="display-3 fw-bold mb-0">{{ averageOverall > 0 ? averageOverall.toFixed(1) : 'N/A' }}
+                        </h1>
+                        <div class="d-flex justify-content-center mt-2 text-warning fs-5">
+                            <i class="bi bi-star-fill me-1" *ngFor="let star of getStarsArray(5)"
+                                [class.opacity-25]="star > averageOverall"></i>
+                        </div>
+                        <small class="opacity-75 mt-2 d-block">Based on {{ totalReviews }} reviews</small>
+                    </div>
+                </div>
+
+                <div class="col-md-8 mb-3">
+                    <div class="card border-0 shadow-sm h-100 p-4 rounded-4">
+                        <h5 class="fw-bold mb-4">Detailed Metrics</h5>
+                        <div class="row">
+                            <div class="col-sm-4 text-center border-end">
+                                <div class="icon-box bg-info-subtle text-info mx-auto mb-2">
+                                    <i class="bi bi-house fs-4"></i>
+                                </div>
+                                <h3 class="fw-bold mb-0">{{ averageAccommodation.toFixed(1) }}</h3>
+                                <small class="text-muted">Accommodation</small>
+                            </div>
+                            <div class="col-sm-4 text-center border-end">
+                                <div class="icon-box bg-success-subtle text-success mx-auto mb-2">
+                                    <i class="bi bi-cup-hot fs-4"></i>
+                                </div>
+                                <h3 class="fw-bold mb-0">{{ averageService.toFixed(1) }}</h3>
+                                <small class="text-muted">Food/Service</small>
+                            </div>
+                            <div class="col-sm-4 text-center">
+                                <div class="icon-box bg-warning-subtle text-warning mx-auto mb-2">
+                                    <i class="bi bi-person-badge fs-4"></i>
+                                </div>
+                                <h3 class="fw-bold mb-0">{{ averageStaff.toFixed(1) }}</h3>
+                                <small class="text-muted">Staff Behaviour</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews List -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <h5 class="fw-bold"><i class="bi bi-chat-text-fill text-primary me-2"></i> Tourist Feedback</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div *ngIf="reviews.length === 0" class="text-center py-5 text-muted">
+                        <i class="bi bi-chat-square-text fs-1 mb-3 d-block opacity-50"></i>
+                        <h5>No reviews yet</h5>
+                        <p>Complete more service requests to start receiving feedback!</p>
+                    </div>
+
+                    <div *ngIf="reviews.length > 0" class="d-flex flex-column gap-3">
+                        <div *ngFor="let review of reviews" class="review-card p-3 rounded-3 border">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-0">{{ review.touristName }}</h6>
+                                    <small class="text-muted">Tour: {{ review.tourName }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-warning mb-1">
+                                        <i class="bi bi-star-fill me-1" *ngFor="let star of getStarsArray(5)"
+                                            [class.text-muted]="star > review.overallStars"
+                                            [class.opacity-25]="star > review.overallStars"></i>
+                                    </div>
+                                    <small class="text-muted">{{ review.date | date:'mediumDate' }}</small>
+                                </div>
+                            </div>
+
+                            <p class="mb-3 mt-2 text-dark">
+                                "{{ review.comment || 'No written feedback provided.' }}"
+                            </p>
+
+                            <div class="d-flex gap-4">
+                                <small class="text-muted"><i class="bi bi-house text-info me-1"></i> Space: {{
+                                    review.accommodationStars }}/5</small>
+                                <small class="text-muted"><i class="bi bi-cup-hot text-success me-1"></i> Quality: {{
+                                    review.serviceStars }}/5</small>
+                                <small class="text-muted"><i class="bi bi-person-badge text-warning me-1"></i> Staff: {{
+                                    review.staffStars }}/5</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- End Ratings Tab -->
+</div>

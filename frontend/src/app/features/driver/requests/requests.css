@@ -1,0 +1,22 @@
+.fs-7 {
+    font-size: 0.85rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.btn-light {
+    background-color: #f3f4f6;
+    border: 1px solid transparent;
+}
+
+.btn-light:disabled {
+    background-color: #e5e7eb;
+    border-color: transparent;
+    color: #9ca3af;
+    opacity: 1;
+}

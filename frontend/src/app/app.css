@@ -1,0 +1,35 @@
+/* Sidebar styling */
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  position: fixed;
+  top: 56px; /* Navbar height */
+  left: 0;
+  overflow-y: auto;
+}
+
+/* Content area beside sidebar */
+.content-area {
+  margin-left: 240px;
+  margin-top: 70px;
+  padding: 20px;
+  background: white;
+  min-height: calc(100vh - 70px);
+}
+
+/* White text links */
+.sidebar .nav-link {
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.sidebar .nav-link:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+/* Make navbar fixed */
+nav.navbar {
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}

@@ -1,0 +1,145 @@
+<div class="container-fluid mb-5 p-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Profile</h2>
+            <p class="text-muted mb-0">Manage your personal information and preferences</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2">
+            <i class="bi bi-pencil-fill small"></i> Edit Profile
+        </button>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Sidebar -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 text-center h-100">
+                <div class="d-flex justify-content-center mb-3">
+                    <div class="avatar-circle overflow-hidden d-flex align-items-center justify-content-center position-relative profile-img-container"
+                        style="cursor: pointer;" (click)="fileInput.click()">
+                        <input #fileInput type="file" (change)="onProfilePicSelected($event)" hidden accept="image/*">
+                        <ng-container *ngIf="getProfilePictureUrl(user.profilePicture) as profileUrl; else initialsIcon">
+                            <img [src]="profileUrl" alt="Profile"
+                                style="width: 120px; height: 120px; object-fit: cover;">
+                        </ng-container>
+                        <ng-template #initialsIcon>
+                            <div class="display-4 fw-bold text-white bg-primary w-100 h-100 d-flex align-items-center justify-content-center">
+                                {{ initials }}
+                            </div>
+                        </ng-template>
+                        <div class="upload-overlay">
+                            <i class="bi bi-camera"></i>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="fw-bold text-dark mb-1">{{ user.name }}</h4>
+                <div class="text-muted mb-4">{{ user.role }}</div>
+                <div class="stats-container d-flex flex-column gap-3">
+                    <div class="stat-card bg-primary-subtle rounded-3 p-3">
+                        <div class="small text-muted mb-1">Member Since</div>
+                        <div class="fw-bold text-dark">{{ user.memberSince }}</div>
+                    </div>
+                    <div class="stat-card bg-success-subtle rounded-3 p-3">
+                        <div class="small text-muted mb-1">Total Tours</div>
+                        <div class="fw-bold text-dark">{{ user.totalTours }} Completed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Content -->
+        <div class="col-md-8">
+            <div class="d-flex flex-column gap-4">
+
+                <!-- Personal Information -->
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-person text-primary"></i> Personal Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Full Name</label>
+                            <input type="text" class="form-control bg-light" [value]="user.name" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Email Address</label>
+                            <input type="text" class="form-control bg-light" [value]="user.email" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Phone Number</label>
+                            <input type="text" class="form-control bg-light" [value]="user.phone" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Date of Birth</label>
+                            <input type="text" class="form-control bg-light" [value]="user.dob || 'Not Provided' "
+                                readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Identification Documents -->
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-card-text text-primary"></i> Identification Documents
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">National ID / CNIC</label>
+                            <input type="text" class="form-control bg-light" [value]="user.cnic || 'Not Provided'"
+                                readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Passport Number</label>
+                            <input type="text" class="form-control bg-light" [value]="user.passport || 'Not Provided'"
+                                readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address & Contact -->
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-geo-alt text-primary"></i> Address & Contact
+                    </h5>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Home Address</label>
+                        <input type="text" class="form-control bg-light" [value]="user.address || 'Not Provided'"
+                            readonly>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Emergency Contact Name</label>
+                            <input type="text" class="form-control bg-light"
+                                [value]="user.emergencyContactName || 'Not Provided'" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">Emergency Contact Number</label>
+                            <input type="text" class="form-control bg-light"
+                                [value]="user.emergencyContactNumber || 'Not Provided'" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Travel Preferences -->
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                        <i class="bi bi-compass text-primary"></i> Travel Preferences
+                    </h5>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Adventure Level</label>
+                        <input type="text" class="form-control bg-light" [value]="user.adventureLevel" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Dietary Requirements</label>
+                        <input type="text" class="form-control bg-light" [value]="user.dietary" readonly>
+                    </div>
+                    <div>
+                        <label class="form-label small text-muted">Medical Information</label>
+                        <input type="text" class="form-control bg-light" [value]="user.medical" readonly>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

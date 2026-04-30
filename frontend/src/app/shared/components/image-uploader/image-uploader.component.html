@@ -1,0 +1,27 @@
+<div class="uploader-container">
+    <!-- Existing Images -->
+    <div class="image-grid" *ngIf="existingImages.length > 0">
+        <div class="image-card" *ngFor="let img of existingImages">
+            <img [src]="img.imageUrl" alt="Gallery Image" class="clickable-image" (click)="onImageClick(img.imageUrl)">
+            <button class="delete-btn" (click)="removeExistingImage(img.imageId)">&times;</button>
+            <span class="badge" *ngIf="img.isPrimary">Primary</span>
+        </div>
+    </div>
+
+    <!-- New Previews -->
+    <div class="image-grid" *ngIf="previews.length > 0">
+        <div class="image-card pending" *ngFor="let preview of previews; let i = index">
+            <img [src]="preview" alt="Preview">
+            <button class="delete-btn" (click)="removeNewImage(i)">&times;</button>
+            <span class="badge pending">Pending</span>
+        </div>
+    </div>
+
+    <!-- Upload Trigger -->
+    <div class="upload-trigger" (click)="fileInput.click()">
+        <div class="icon">📁</div>
+        <p>Click to select images</p>
+        <input #fileInput type="file" [multiple]="multiple" accept="image/*" (change)="onFilesSelected($event)"
+            style="display: none;">
+    </div>
+</div>

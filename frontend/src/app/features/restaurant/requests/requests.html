@@ -1,0 +1,78 @@
+<div class="container-fluid dashboard-container">
+    <!-- Header -->
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark section-title mb-1">
+            Tour Food Requests
+        </h2>
+        <p class="text-muted mb-0">Track your pending offers waiting for admin approval</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4" *ngFor="let stat of summaryStats">
+            <div class="card border-0 shadow-sm p-3 h-100 rounded-4">
+                <small class="text-secondary fw-bold mb-2 d-block">{{stat.title}}</small>
+                <h3 class="fw-bold text-dark mb-0">{{stat.value}}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request List -->
+    <div class="d-flex flex-column gap-3">
+        <div class="card border-0 shadow-sm rounded-4 p-4" *ngFor="let req of requests">
+
+            <!-- Card Header -->
+            <div class="d-flex align-items-center mb-1">
+                <h5 class="fw-bold text-dark me-3 mb-0">{{req.tourName}}</h5>
+                <span class="badge rounded-pill fw-normal px-3 py-1 d-flex align-items-center gap-1"
+                    [ngClass]="getBadgeClass(req.status)">
+                    <i class="bi" [ngClass]="getIconClass(req.status)"></i> {{req.status}}
+                </span>
+            </div>
+            <p class="text-muted small mb-4">{{req.submittedTime}}</p>
+
+            <!-- Details Grid -->
+            <div class="row g-4 mb-4 border-bottom pb-4">
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center text-muted mb-1">
+                        <i class="bi bi-calendar-event me-2"></i> Tour Date
+                    </div>
+                    <div class="fw-bold text-dark">{{req.tourDate}}</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center text-muted mb-1">
+                        <i class="bi bi-people me-2"></i> Tourists
+                    </div>
+                    <div class="fw-bold text-dark">{{req.tourists}}</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center text-muted mb-1">
+                        <i class="bi bi-cup-hot me-2"></i> Meal Type
+                    </div>
+                    <div class="fw-bold text-dark">{{req.mealType}}</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center text-muted mb-1">
+                        <span class="me-2">PKR</span> Per-Head Price
+                    </div>
+                    <div class="fw-bold text-dark">PKR {{req.pricePerHead | number}}</div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="d-flex justify-content-between align-items-end">
+                <div>
+                    <div class="text-muted small mb-1">Total Offer Amount</div>
+                    <h4 class="fw-bold text-primary mb-1">PKR {{req.totalAmount | number}}</h4>
+                    <small class="text-muted">{{req.calculation}}</small>
+                </div>
+                <div>
+                    <button class="btn btn-light fw-bold px-4 py-2 rounded-3 text-dark border">
+                        View Details
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

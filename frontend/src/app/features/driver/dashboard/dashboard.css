@@ -1,0 +1,72 @@
+.dashboard-container {
+    max-width: 1400px;
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.stats-card {
+    border: none;
+    border-radius: 16px;
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.hover-bg:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.custom-tabs .nav-link {
+    color: #495057;
+    transition: all 0.3s ease;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.custom-tabs .nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+}
+
+.custom-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.review-card {
+    background-color: #fbfbfb;
+    transition: border-color 0.2s;
+}
+
+.review-card:hover {
+    border-color: #0d6efd !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

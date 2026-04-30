@@ -1,0 +1,168 @@
+<div class="d-flex" style="height: 100vh; overflow: hidden;">
+
+    <!-- Mobile Header -->
+    <div class="d-flex d-md-none align-items-center justify-content-between p-3 bg-white shadow-sm position-fixed top-0 w-100"
+        style="z-index: 1060; height: 60px;">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-airplane-engines-fill fs-4 me-2 text-info"></i>
+            <span class="fs-5 fw-bold tracking-tight text-dark">SAFARNAMA</span>
+        </div>
+        <button class="btn btn-light border-0" (click)="toggleSidebar()">
+            <i class="bi bi-list fs-2"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay d-md-none" [class.show]="isSidebarOpen" (click)="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-dark shadow-sm" [class.show]="isSidebarOpen"
+        style="width: 260px; background: #ffffff; z-index: 1070; overflow-y: auto;">
+
+        <!-- Logo (Visible on Desktop) -->
+        <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+            <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                <i class="bi bi-airplane-engines-fill fs-3 me-2 text-primary"></i>
+                <span class="fs-4 fw-bold tracking-tight">SAFARNAMA</span>
+            </a>
+            <!-- Close Button (Visible only on Mobile) -->
+            <button class="btn btn-link text-dark d-md-none p-0" (click)="toggleSidebar()">
+                <i class="bi bi-x fs-2"></i>
+            </button>
+        </div>
+
+        <div class="px-2 mt-2 mb-3">
+            <div class="text-muted small mb-1">Welcome back, {{ user?.name?.split(' ')[0] || 'Admin' }}</div>
+            <div class="dropdown">
+                <div class="d-flex align-items-center cursor-pointer" id="sidebarProfileDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-2"
+                        style="width: 32px; height: 32px;">
+                        <ng-container *ngIf="getProfilePictureUrl(user?.profilePicture) as profileUrl; else sidebarInitials">
+                            <img [src]="profileUrl" alt="Profile" class="rounded-circle"
+                                style="width: 32px; height: 32px; object-fit: cover;">
+                        </ng-container>
+                        <ng-template #sidebarInitials>
+                            <i class="bi bi-person-badge text-white"></i>
+                        </ng-template>
+                    </div>
+                    <div class="fw-bold fs-6 me-2 text-dark">{{ user?.name || 'Admin' }}</div>
+                    <i class="bi bi-chevron-down small text-muted"></i>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary mt-2"
+                    aria-labelledby="sidebarProfileDropdown">
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/admin/settings">
+                            <i class="bi bi-gear text-secondary"></i> Settings
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider border-secondary opacity-50">
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="/login"
+                            (click)="logout()">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="border-dark opacity-10 mx-2 my-2">
+
+        <!-- Plan a Tour Button -->
+        <div class="px-2 mb-4 mt-2">
+            <button
+                class="btn btn-teal w-100 text-start text-white fw-bold py-2 d-flex align-items-center justify-content-center shadow-sm"
+                routerLink="/admin/plan-tour" (click)="toggleSidebar()">
+                <i class="bi bi-geo-alt-fill me-2"></i> Plan a Tour
+            </button>
+        </div>
+
+        <ul class="nav nav-pills flex-column mb-auto px-2 gap-1">
+
+            <li class="nav-item">
+                <a routerLink="/admin/dashboard" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-grid-1x2-fill me-3 fs-5"></i> Dashboard
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a routerLink="/admin/manage-tours" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-cursor me-3 fs-5"></i> Intermediate Tours
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/finalized-tours" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-check-circle me-3 fs-5"></i> Finalized Tours
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/history" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-clock-history me-3 fs-5"></i> History
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/manage-drivers" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-truck me-3 fs-5"></i> Manage Drivers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/manage-restaurants" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-egg-fried me-3 fs-5"></i>
+                    <div class="d-flex flex-column lh-1">
+                        <span>Manage</span>
+                        <span style="font-size: 0.85em;">Restaurants/Hotels</span>
+                    </div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/payments" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-credit-card me-3 fs-5"></i> Payments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/reports" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-bar-chart me-3 fs-5"></i> Reports
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/notifications"
+                    class="nav-link text-secondary d-flex align-items-center justify-content-between py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-bell me-3 fs-5"></i> Notifications
+                    </div>
+                    <span class="badge bg-danger rounded-pill" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/admin/settings" class="nav-link text-secondary d-flex align-items-center py-2"
+                    routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+                    <i class="bi bi-gear me-3 fs-5"></i> Settings
+                </a>
+            </li>
+        </ul>
+
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper d-flex flex-column flex-fill bg-light" style="overflow-y: auto;">
+
+        <!-- Router Outlet Container -->
+        <div class="flex-grow-1" style="padding: 30px;">
+            <router-outlet></router-outlet>
+        </div>
+
+    </div>
+
+</div>

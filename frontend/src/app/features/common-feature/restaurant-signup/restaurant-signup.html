@@ -1,0 +1,181 @@
+<div class="restaurant-signup-container">
+    <div class="signup-card">
+        <!-- Header Section -->
+        <div class="header-section">
+            <button class="back-button" (click)="goBack()">
+                <i class="bi bi-arrow-left"></i> Back
+            </button>
+            <div class="icon-circle">
+                <i class="bi bi-shop"></i>
+            </div>
+            <h1 class="page-title">Restaurant Registration</h1>
+            <p class="page-subtitle">Join our network and reach more customers</p>
+        </div>
+
+        <!-- Stepper -->
+        <div class="stepper-wrapper">
+            <div class="stepper-item" *ngFor="let step of steps" [class.active]="step.number === currentStep"
+                [class.completed]="step.number < currentStep">
+                <div class="step-circle">
+                    <i class="bi bi-check-lg" *ngIf="step.number < currentStep"></i>
+                    <span *ngIf="step.number >= currentStep">{{step.number}}</span>
+                </div>
+                <div class="step-name">{{step.name}}</div>
+            </div>
+        </div>
+
+        <!-- Form Content -->
+        <form (ngSubmit)="currentStep === 3 ? submitApplication() : nextStep()">
+
+            <!-- Step 1: Personal Info & Logo -->
+            <div *ngIf="currentStep === 1" class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Owner Name</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-person input-icon"></i>
+                        <input type="text" class="form-input" placeholder="e.g. John Doe" [(ngModel)]="ownerName"
+                            name="ownerName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-envelope input-icon"></i>
+                        <input type="email" class="form-input" placeholder="e.g. john@example.com" [(ngModel)]="email"
+                            name="email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-telephone input-icon"></i>
+                        <input type="tel" class="form-input" placeholder="e.g. +1 234 567 8900"
+                            [(ngModel)]="phoneNumber" name="phoneNumber" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-lock input-icon"></i>
+                        <input [type]="showPassword ? 'text' : 'password'" class="form-input"
+                            placeholder="Create a password" [(ngModel)]="password" name="password" required>
+                        <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                            <i class="bi" [class.bi-eye]="showPassword" [class.bi-eye-slash]="!showPassword"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-lock input-icon"></i>
+                        <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-input"
+                            placeholder="Confirm your password" [(ngModel)]="confirmPassword" name="confirmPassword"
+                            required>
+                        <button type="button" class="toggle-password" (click)="toggleConfirmPasswordVisibility()">
+                            <i class="bi" [class.bi-eye]="showConfirmPassword"
+                                [class.bi-eye-slash]="!showConfirmPassword"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Restaurant Logo</label>
+                    <div class="upload-box">
+                        <i class="bi bi-cloud-arrow-up text-muted fs-4"></i>
+                        <div>
+                            <h6 class="mb-0">Click to upload</h6>
+                            <small class="text-muted">{{ profilePicture ? profilePicture.name : 'SVG, PNG, JPG (max.
+                                800x400px)' }}</small>
+                        </div>
+                        <input type="file" class="file-input" (change)="onProfilePicSelected($event)" accept="image/*">
+                    </div>
+                </div>
+
+
+
+                <button type="button" class="next-btn" (click)="nextStep()">
+                    Continue <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Step 2: Verification (OTP) -->
+            <div *ngIf="currentStep === 2" class="form-grid text-center">
+                <app-verify-otp [email]="email" [redirectOnSuccess]="false"
+                    (verified)="onOtpVerified()"></app-verify-otp>
+            </div>
+
+            <!-- Step 3: Business License & Details -->
+            <div *ngIf="currentStep === 3" class="form-grid">
+                <!-- Business Name & Type (Shifted from Step 1) -->
+                <div class="form-group">
+                    <label class="form-label">Business Name</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-shop input-icon"></i>
+                        <input type="text" class="form-input" placeholder="e.g. Tasty Bites"
+                            [(ngModel)]="restaurantName" name="restaurantName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Business Type *</label>
+                    <div class="business-type-grid">
+                        <div *ngFor="let type of businessTypes" class="business-type-card"
+                            [class.selected]="businessType === type.value" (click)="businessType = type.value">
+                            <div class="type-icon">{{type.icon}}</div>
+                            <div class="type-label">{{type.label}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-geo-alt input-icon"></i>
+                        <input type="text" class="form-input" placeholder="Full street address" [(ngModel)]="address"
+                            name="address" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Postal Code</label>
+                    <div class="input-wrapper">
+                        <i class="bi bi-mailbox input-icon"></i>
+                        <input type="text" class="form-input" placeholder="e.g. 54000" [(ngModel)]="postalCode"
+                            name="postalCode" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Business License</label>
+                    <div class="upload-box">
+                        <i class="bi bi-file-earmark-text text-muted fs-4"></i>
+                        <div>
+                            <h6 class="mb-0">Upload License</h6>
+                            <small class="text-muted">{{ businessLicenseFile ? businessLicenseFile.name : 'PDF or Image'
+                                }}</small>
+                        </div>
+                        <input type="file" class="file-input" (change)="onLicenseSelected($event)"
+                            accept=".pdf,image/*">
+                    </div>
+                </div>
+
+                <!-- Restaurant Photos -->
+                <div class="form-group">
+                    <label class="form-label fw-bold text-dark">Restaurant Photos</label>
+                    <app-image-uploader (imagesSelected)="onImagesSelected($event)" [multiple]="true">
+                    </app-image-uploader>
+                    <p class="small text-muted mt-1">Upload photos of your restaurant interior, exterior, and ambiance.
+                    </p>
+                </div>
+
+                <button type="button" class="next-btn" (click)="nextStep()">
+                    Continue <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

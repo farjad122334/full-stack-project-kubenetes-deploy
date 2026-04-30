@@ -1,0 +1,34 @@
+.bg-warning-subtle-custom {
+    background-color: #fffbeb;
+}
+
+.bg-primary-subtle-custom {
+    background-color: #eff6ff;
+}
+
+.fs-header {
+    font-size: 0.7em;
+    vertical-align: middle;
+}
+
+.progress {
+    background-color: #e5e7eb;
+    border-radius: 999px;
+}
+
+.progress-bar {
+    border-radius: 999px;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08) !important;
+}
+
+.badge {
+    font-weight: 500;
+}

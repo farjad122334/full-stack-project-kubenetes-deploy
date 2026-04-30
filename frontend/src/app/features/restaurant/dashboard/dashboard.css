@@ -1,0 +1,130 @@
+.dashboard-container {
+    max-width: 1400px;
+    padding: 2rem;
+}
+
+.stat-card {
+    border-radius: 16px;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+}
+
+.bg-purple {
+    background-color: var(--bs-purple, #6f42c1) !important;
+}
+
+.text-purple {
+    color: var(--bs-purple, #6f42c1) !important;
+}
+
+.activity-row {
+    transition: background-color 0.2s ease;
+}
+
+.activity-row:hover {
+    background-color: #f8f9fa;
+}
+
+.activity-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #dee2e6;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.action-card {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+}
+
+.action-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+}
+
+.action-card:hover {
+    transform: translateY(-5px);
+}
+
+.input-group-text,
+.form-control,
+.form-select {
+    border-color: #dee2e6;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+}
+
+/* Tabs & Ratings Specific Styles */
+.custom-tabs .nav-link {
+    color: #495057;
+    transition: all 0.3s ease;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.custom-tabs .nav-link.active {
+    background-color: #0d6efd;
+    color: white;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+}
+
+.custom-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.review-card {
+    background-color: #fbfbfb;
+    transition: border-color 0.2s;
+}
+
+.review-card:hover {
+    border-color: #0d6efd !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

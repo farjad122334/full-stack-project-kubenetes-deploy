@@ -1,0 +1,59 @@
+<div class="role-selection-container">
+  <div class="role-selection-wrapper">
+    <!-- Back Button -->
+    <button class="back-button" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i> Back
+    </button>
+
+    <!-- Header Section -->
+    <div class="header-section">
+      <h1 class="main-title">Choose Your Role</h1>
+      <p class="subtitle">Select the type of account you want to create</p>
+    </div>
+
+    <!-- Role Cards -->
+    <div class="role-cards-container">
+      <!-- Tourist Card -->
+      <div class="role-card" (click)="selectRole('tourist')">
+        <div class="icon-circle tourist-icon">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        <h3 class="role-title">Tourist</h3>
+        <p class="role-description">Explore destinations, book tours,<br>and enjoy your journey</p>
+      </div>
+
+      <!-- Driver Card -->
+      <div class="role-card" (click)="selectRole('driver')">
+        <div class="icon-circle driver-icon">
+          <i class="bi bi-truck"></i>
+        </div>
+        <h3 class="role-title">Driver</h3>
+        <p class="role-description">Provide transportation services<br>and earn income</p>
+      </div>
+
+      <!-- Restaurant Card -->
+      <div class="role-card" (click)="selectRole('manager')">
+        <div class="icon-circle restaurant-icon">
+          <i class="bi bi-shop"></i>
+        </div>
+        <h3 class="role-title">Restaurant</h3>
+        <p class="role-description">List your restaurant and serve<br>delicious meals</p>
+      </div>
+    </div>
+
+    <!-- Note Section -->
+    <div class="note-section">
+      <p class="note-text">
+        <strong>Note:</strong> Admin accounts are managed by system administrators. If you need admin access, please
+        contact support.
+      </p>
+    </div>
+
+    <!-- Footer Link -->
+    <div class="footer-section">
+      <p class="footer-text">
+        Already have an account? <a routerLink="/login" class="login-link">Login here</a>
+      </p>
+    </div>
+  </div>
+</div>

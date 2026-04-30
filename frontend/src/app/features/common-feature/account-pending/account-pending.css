@@ -1,0 +1,21 @@
+.pending-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+}
+
+.card {
+    max-width: 500px;
+    width: 100%;
+    background: white;
+}
+
+
+
+.text-warning i {
+    display: inline-block;
+    animation: hourglass-flip 3s infinite ease-in-out;
+}

@@ -1,0 +1,220 @@
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark mb-1">My Bookings 🎫</h2>
+            <p class="text-muted">Track all your tour reservations and trip history</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div *ngIf="!isLoading" class="row mb-5 g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="background-color: #f0fff4;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="display-5 fw-normal text-success mb-1">{{ completedCount }}</h2>
+                        <span class="text-success fw-medium">Completed Tours</span>
+                    </div>
+                    <div class="rounded-circle bg-white p-2 border border-success border-2 d-flex align-items-center justify-content-center"
+                        style="width: 48px; height: 48px;">
+                        <i class="bi bi-check-lg text-success fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="background-color: #e8f3ff;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="display-5 fw-normal text-primary mb-1">{{ ongoingCount }}</h2>
+                        <span class="text-primary fw-medium">Confirmed / Ongoing</span>
+                    </div>
+                    <div class="rounded-circle bg-white p-2 border border-primary border-2 d-flex align-items-center justify-content-center"
+                        style="width: 48px; height: 48px;">
+                        <i class="bi bi-clock text-primary fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="background-color: #fffde7;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="display-5 fw-normal text-warning mb-1">{{ pendingCount }}</h2>
+                        <span class="text-warning fw-medium">Pending Approvals</span>
+                    </div>
+                    <div class="rounded-circle bg-white p-2 border border-warning border-2 d-flex align-items-center justify-content-center"
+                        style="width: 48px; height: 48px;">
+                        <i class="bi bi-hourglass-split text-warning fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- No Bookings State -->
+    <div *ngIf="!isLoading && bookings.length === 0" class="text-center py-5">
+        <i class="bi bi-ticket-perforated fs-1 text-muted"></i>
+        <h4 class="mt-3 text-secondary">No bookings found</h4>
+        <p class="text-muted">You haven't booked any tours yet. Start exploring now!</p>
+        <a routerLink="/tourist/explore" class="btn btn-primary px-4 rounded-pill">Explore Tours</a>
+    </div>
+
+    <!-- Tour Cards -->
+    <div *ngIf="!isLoading && bookings.length > 0" class="row">
+        <div class="col-12">
+            <div *ngFor="let booking of bookings" class="card border-0 shadow-sm mb-4 overflow-hidden">
+                <div class="row g-0">
+                    <!-- Image Section (Using dynamic tour image or fallback) -->
+                    <div class="col-md-3 position-relative">
+                        <div class="h-100 bg-dark"
+                            style="min-height: 250px; background-size: cover; background-position: center;"
+                            [style.background-image]="'linear-gradient(45deg, #2c3e50, #3498db)'">
+
+                            <!-- Status Badge Over Image -->
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <span *ngIf="booking.status === 'Pending'"
+                                    class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-3 py-2">
+                                    <i class="bi bi-hourglass-split me-1"></i> Pending
+                                </span>
+                                <span *ngIf="booking.status === 'Confirmed'"
+                                    class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Confirmed
+                                </span>
+                                <span *ngIf="booking.status === 'Completed'"
+                                    class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
+                                    <i class="bi bi-check-circle me-1"></i> Completed
+                                </span>
+                                <span *ngIf="booking.status === 'Cancelled'"
+                                    class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">
+                                    <i class="bi bi-x-circle me-1"></i> Cancelled
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div class="col-md-9">
+                        <div class="card-body p-4">
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h3 class="fw-normal mb-1">{{ booking.title }}</h3>
+                                    <p class="text-muted mb-0"><i class="bi bi-geo-alt me-1"></i> {{ booking.location }}
+                                    </p>
+                                </div>
+                                <div class="text-end">
+                                    <h3 class="fw-normal text-primary mb-0">{{ formatCurrency(booking.totalCost) }}</h3>
+                                    <span class="text-muted small">Total Paid for {{ booking.persons }} persons</span>
+                                </div>
+                            </div>
+
+                            <!-- Details Grid -->
+                            <div class="row g-3 mb-4 mt-2">
+                                <div class="col-md-4">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary"><i class="bi bi-calendar3 fs-5"></i></div>
+                                        <div>
+                                            <span class="d-block text-muted small">Tour Dates</span>
+                                            <span class="fw-medium">{{ booking.startDate }} - {{ booking.endDate
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary"><i class="bi bi-clock fs-5"></i></div>
+                                        <div>
+                                            <span class="d-block text-muted small">Duration</span>
+                                            <span class="fw-medium">{{ booking.duration }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex">
+                                        <div class="me-3 text-primary"><i class="bi bi-receipt fs-5"></i></div>
+                                        <div>
+                                            <span class="d-block text-muted small">Booking Date</span>
+                                            <span class="fw-medium">{{ booking.bookingDate }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary px-4 rounded-pill"
+                                    [routerLink]="['/tourist/tour-details', booking.tourId]">
+                                    <i class="bi bi-eye me-2"></i>View Tour Details
+                                </button>
+
+                                <button *ngIf="booking.status === 'Completed'"
+                                    class="btn btn-warning text-white px-4 rounded-pill"
+                                    (click)="openReviewModal(booking.tourId)">
+                                    <i class="bi bi-star-fill me-2"></i>Rate & Review
+                                </button>
+
+                                <!-- Pay Now for Pending -->
+                                <button *ngIf="booking.status === 'Pending'" class="btn btn-success px-4 rounded-pill"
+                                    (click)="payNow(booking.id)" [disabled]="isPayingId === booking.id">
+                                    <span *ngIf="isPayingId === booking.id"
+                                        class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    <i *ngIf="isPayingId !== booking.id" class="bi bi-credit-card me-2"></i>
+                                    {{ isPayingId === booking.id ? 'Redirecting...' : 'Pay Now' }}
+                                </button>
+
+                                <button *ngIf="booking.status === 'Confirmed'"
+                                    class="btn btn-outline-secondary px-4 rounded-pill" disabled>
+                                    <i class="bi bi-check-circle me-2"></i>Payment Received
+                                </button>
+                                <button class="btn btn-outline-info px-4 rounded-pill"
+                                    (click)="openMapModal(booking)">
+                                    <i class="bi bi-map me-2"></i>View Departure Location
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <app-review-modal *ngIf="showReviewModal && selectedTourId" [tourId]="selectedTourId" (close)="closeReviewModal()"
+        (submitted)="submitReview(selectedTourId)">
+    </app-review-modal>
+
+    <!-- Map Modal -->
+    <div class="modal d-block" tabindex="-1" *ngIf="showMapModal" style="background-color: rgba(0,0,0,0.5); z-index: 2000; position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header border-bottom-0 bg-light">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        Departure Location
+                    </h5>
+                    <button type="button" class="btn-close shadow-none" (click)="closeMapModal()"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="p-3 bg-white border-bottom">
+                        <p class="mb-0 fw-medium text-dark">
+                            <strong>Address:</strong> {{ selectedBookingForMap?.tour?.departureLocation }}
+                        </p>
+                    </div>
+                    <!-- Map Container -->
+                    <div #bookingMapContainer style="height: 400px; width: 100%;"></div>
+                </div>
+                <div class="modal-footer border-top-0 bg-light">
+                    <button type="button" class="btn btn-primary px-4 fw-bold rounded-pill" (click)="closeMapModal()">Got it</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

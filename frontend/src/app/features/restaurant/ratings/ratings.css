@@ -1,0 +1,11 @@
+.review-card {
+    transition: box-shadow 0.2s;
+}
+
+.review-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.progress-bar {
+    border-radius: 4px;
+}

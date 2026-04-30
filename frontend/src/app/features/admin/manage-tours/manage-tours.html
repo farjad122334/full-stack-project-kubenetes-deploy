@@ -1,0 +1,624 @@
+<div class="container-fluid p-4">
+
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1" *ngIf="!selectedTour">Intermediate Tours</h4>
+            <div *ngIf="selectedTour" class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-secondary btn-sm" (click)="clearSelection()">
+                    <i class="bi bi-arrow-left"></i> Back
+                </button>
+                <h4 class="fw-bold mb-0 ms-2">{{selectedTour.name}}</h4>
+                <span class="badge rounded-pill px-3 py-2 fw-normal ms-2"
+                    [className]="'badge ' + selectedTour.statusClass">
+                    {{selectedTour.status}}
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LIST VIEW -->
+    <div class="d-flex flex-column gap-3" *ngIf="!selectedTour">
+        <div class="card border-0 shadow-sm rounded-4 p-3 hover-shadow" *ngFor="let tour of filteredTours"
+            (click)="selectTour(tour)" style="cursor: pointer;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-4">
+                    <div class="bg-light rounded-3 p-3 text-center" style="min-width: 80px;">
+                        <div class="fw-bold text-dark">{{tour.participants}}</div>
+                        <div class="small text-muted" style="font-size: 0.7rem;">PAX</div>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1 text-dark">{{tour.name}}</h6>
+                        <div class="d-flex gap-3 text-muted small">
+                            <span><i class="bi bi-geo-alt me-1"></i> {{tour.destination}}</span>
+                            <span><i class="bi bi-calendar me-1"></i> {{tour.duration}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-4">
+                    <div class="text-end d-none d-md-block">
+                        <div class="badge bg-light text-dark mb-1 border" *ngIf="tour.transport.hasService">
+                            <i class="bi bi-truck me-1"></i> {{tour.transport.status}}
+                        </div>
+                        <div class="badge bg-light text-dark border ms-2" *ngIf="tour.accommodation.hasService">
+                            <i class="bi bi-building me-1"></i> {{tour.accommodation.status}}
+                        </div>
+                    </div>
+                    <div class="text-end" style="min-width: 120px;">
+                        <h6 class="fw-bold mb-0 text-dark">{{tour.price}}</h6>
+                        <small class="text-muted">Total Budget</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center mt-4"
+            *ngIf="filteredTours.length === 0 && !loading">
+            <div class="mb-4">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center"
+                    style="width: 80px; height: 80px;">
+                    <i class="bi bi-calendar-x fs-1 text-muted"></i>
+                </div>
+            </div>
+            <h5 class="fw-bold text-dark mb-2">No Tours Found</h5>
+            <p class="text-muted mb-4 mx-auto" style="max-width: 300px;">
+                No tours found in this category.
+            </p>
+            <button class="btn btn-teal text-white shadow-sm px-4 py-2 mx-auto d-flex align-items-center gap-2"
+                routerLink="/admin/plan-tour">
+                <i class="bi bi-plus-lg"></i> Plan a New Tour
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div class="text-center p-5" *ngIf="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-2">Loading tours...</p>
+        </div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div *ngIf="selectedTour" class="row g-4">
+
+        <!-- Left Column: Tour Info -->
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                <h6 class="fw-bold mb-3">Tour Details</h6>
+
+                <div class="mb-3">
+                    <label class="small text-muted d-block">Destination</label>
+                    <span class="fw-medium">{{selectedTour.destination}}</span>
+                </div>
+                <div class="mb-3">
+                    <label class="small text-muted d-block">Duration</label>
+                    <span class="fw-medium">{{selectedTour.duration}}</span>
+                </div>
+                <div class="mb-3">
+                    <label class="small text-muted d-block">Total Participants</label>
+                    <span class="fw-medium">{{selectedTour.participants}} people</span>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm w-100 mb-2" (click)="clearSelection()">
+                    <i class="bi bi-arrow-left me-1"></i> Back to List
+                </button>
+                <button class="btn btn-primary btn-sm w-100 mb-2" (click)="publishTour(selectedTour.id)"
+                    *ngIf="selectedTour.status === 'Draft'">
+                    <i class="bi bi-send me-1"></i> Publish Tour
+                </button>
+                <button class="btn btn-success btn-sm w-100 mb-2" (click)="finalizeTour(selectedTour.id)"
+                    *ngIf="selectedTour.status === 'Ready to Finalize' || selectedTour.status === 'Published'">
+                    <i class="bi bi-check-circle me-1"></i> Finalize Tour
+                </button>
+
+                <!-- Start Tour Button -->
+                <div *ngIf="selectedTour.status === 'Finalized'" class="d-grid mb-2">
+                    <button class="btn btn-primary btn-sm w-100" (click)="startTour(selectedTour.id)"
+                        [disabled]="!canStartTour(selectedTour)"
+                        [title]="!canStartTour(selectedTour) ? 'Cannot start yet. Start date is ' + (selectedTour.startDate | date) : 'Start Tour'">
+                        <i class="bi bi-play-circle me-1"></i> Start Tour
+                    </button>
+                    <small class="text-danger d-block mt-1" style="font-size: 0.7em;"
+                        *ngIf="!canStartTour(selectedTour)">
+                        Starts on {{selectedTour.startDate | date}}
+                    </small>
+                </div>
+
+                <!-- Complete Tour Button -->
+                <div *ngIf="selectedTour.status === 'InProgress'" class="d-grid mb-2">
+                    <button class="btn btn-secondary btn-sm w-100" (click)="completeTour(selectedTour.id)"
+                        [disabled]="!canCompleteTour(selectedTour)"
+                        [title]="!canCompleteTour(selectedTour) ? 'Cannot complete yet. End date is ' + (selectedTour.endDate | date) : 'Complete Tour'">
+                        <i class="bi bi-check-all me-1"></i> Complete Tour
+                    </button>
+                    <small class="text-danger d-block mt-1" style="font-size: 0.7em;"
+                        *ngIf="!canCompleteTour(selectedTour)">
+                        Ends on {{selectedTour.endDate | date}}
+                    </small>
+                </div>
+
+                <small class="text-muted d-block mt-2" *ngIf="selectedTour.status === 'Awaiting Offers'">
+                    <i class="bi bi-info-circle me-1"></i> Complete all offers to finalize
+                </small>
+            </div>
+        </div>
+
+        <!-- Right Column: Tabs and Offers -->
+        <div class="col-md-9">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+                <!-- Tabs -->
+                <div class="d-flex border-bottom bg-light">
+                    <button class="btn btn-link text-decoration-none py-3 px-4 fw-bold text-dark border-bottom border-3"
+                        [class.border-primary]="activeTab === 'transport'"
+                        [class.border-transparent]="activeTab !== 'transport'" (click)="activeTab = 'transport'">
+                        <i class="bi bi-truck me-2"></i> Transport Offers
+                    </button>
+                    <button class="btn btn-link text-decoration-none py-3 px-4 fw-bold text-dark border-bottom border-3"
+                        [class.border-primary]="activeTab === 'services'"
+                        [class.border-transparent]="activeTab !== 'services'" (click)="activeTab = 'services'"
+                        *ngIf="selectedTour.accommodation.hasService">
+                        <i class="bi bi-building me-2"></i> Services
+                    </button>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <!-- TRANSPORT LOGIC -->
+                    <div *ngIf="activeTab === 'transport'">
+
+                        <!-- Capacity Counter -->
+                        <div class="p-4 bg-light rounded-4 mb-4 text-center">
+                            <div class="row align-items-center">
+                                <div class="col-md-4">
+                                    <div class="text-muted small">Total Needed</div>
+                                    <h2 class="fw-bold text-dark">{{selectedTour.participants}}</h2>
+                                </div>
+                                <div class="col-md-4 border-start border-end">
+                                    <div class="text-muted small">Filled Capacity</div>
+                                    <h2 class="fw-bold text-success">{{filledCapacity}}</h2>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-muted small">Remaining</div>
+                                    <h2 class="fw-bold" [class.text-danger]="remainingNeeded > 0"
+                                        [class.text-success]="remainingNeeded <= 0">
+                                        {{remainingNeeded > 0 ? remainingNeeded : 'Fulfilled'}}
+                                    </h2>
+                                </div>
+                            </div>
+                            <!-- Progress Bar -->
+                            <div class="progress mt-3" style="height: 10px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    [style.width.%]="(filledCapacity / selectedTour.participants) * 100"></div>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-3">Driver Offers</h6>
+
+                        <!-- Driver Offer List -->
+                        <div class="d-flex flex-column gap-3">
+                            <div class="card border border-light shadow-sm" *ngFor="let offer of currentDriverOffers">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="bg-light rounded-circle p-2">
+                                            <i class="bi bi-car-front-fill fs-4 text-secondary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0">{{offer.driverName}} <span
+                                                    class="badge bg-secondary ms-2">{{offer.vehicleParams}}</span></h6>
+                                            <div class="text-muted small">Vehicle Capacity: <b>{{offer.capacity}}</b>
+                                                &bull; {{offer.vehicleModel}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fw-bold text-dark">{{offer.price}}</div>
+
+                                        <!-- Actions -->
+                                        <button class="btn btn-sm btn-success mt-1" *ngIf="!offer.isApproved"
+                                            (click)="toggleDriverApproval(offer)">
+                                            Approve (+{{offer.capacity}})
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger mt-1" *ngIf="offer.isApproved"
+                                            (click)="toggleDriverApproval(offer)">
+                                            Unapprove (-{{offer.capacity}})
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-success-subtle border-0" *ngIf="offer.isApproved">
+                                    <small class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Approved
+                                        - Contribution: {{offer.capacity}} seats</small>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- SERVICES TAB: Requirements & Offers -->
+                    <div *ngIf="activeTab === 'services'">
+
+                        <!-- NO REQUIREMENTS CASE -->
+                        <div *ngIf="serviceRequirements.length === 0" class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i> No service requirements for this tour. Add
+                            requirements in the tour planning phase.
+                        </div>
+
+                        <!-- REQUIREMENTS LIST -->
+                        <div *ngFor="let requirement of serviceRequirements" class="mb-4">
+                            <div class="card border-0 shadow-sm rounded-4">
+                                <div class="card-header bg-light border-0 rounded-top-4 p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="fw-bold mb-1">
+                                                <i class="bi"
+                                                    [ngClass]="requirement.type === 'Meal' ? 'bi-cup-hot' : 'bi-building'"></i>
+                                                {{ requirement.type }} - {{ requirement.location }}
+                                            </h6>
+                                            <small class="text-muted">{{ requirement.dateNeeded | date:'mediumDate' }} •
+                                                {{
+                                                requirement.estimatedPeople }} people</small>
+                                        </div>
+                                        <span class="badge" [ngClass]="getRequirementStatusClass(requirement.status)">
+                                            {{ requirement.status }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-0 mt-2 text-muted small" *ngIf="requirement.details">{{
+                                        requirement.details }}</p>
+                                </div>
+                                <div class="card-body p-3">
+                                    <p class="mb-2 fw-medium">Restaurant Offers ({{ requirement.offers?.length || 0 }})
+                                    </p>
+
+                                    <!-- NO OFFERS -->
+                                    <div *ngIf="!requirement.offers || requirement.offers.length === 0"
+                                        class="alert alert-warning mb-0">
+                                        <i class="bi bi-exclamation-triangle me-2"></i> No restaurant offers yet
+                                    </div>
+
+                                    <!-- OFFER CARDS -->
+                                    <div class="row g-3">
+                                        <div *ngFor="let offer of requirement.offers" class="col-md-6">
+                                            <div class="card border"
+                                                [ngClass]="offer.isApproved ? 'border-success bg-success-subtle' : 'border-secondary'">
+                                                <div class="card-body p-3">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h6 class="fw-bold mb-0">{{ offer.restaurantName }}</h6>
+                                                            <small class="text-muted"
+                                                                *ngIf="requirement.type === 'Meal'">{{ offer.mealType
+                                                                }}</small>
+                                                            <small class="text-muted"
+                                                                *ngIf="requirement.type === 'Accommodation'">Accommodation</small>
+                                                        </div>
+
+                                                        <!-- Meal Pricing -->
+                                                        <span class="badge bg-primary"
+                                                            *ngIf="requirement.type === 'Meal'">
+                                                            PKR {{ offer.pricePerHead }}/head
+                                                        </span>
+
+                                                        <!-- Accommodation Pricing -->
+                                                        <span class="badge bg-primary"
+                                                            *ngIf="requirement.type === 'Accommodation'">
+                                                            <span *ngIf="offer.totalRent">Total: PKR {{ offer.totalRent
+                                                                | number }}</span>
+                                                            <span *ngIf="!offer.totalRent">Pending Review</span>
+                                                        </span>
+                                                    </div>
+
+                                                    <!-- Meal Details -->
+                                                    <p class="mb-2 small text-muted"
+                                                        *ngIf="requirement.type === 'Meal'">
+                                                        <i class="bi bi-people me-1"></i> {{ offer.minimumPeople }} - {{
+                                                        offer.maximumPeople }} people
+                                                        <br>
+                                                        <i class="bi bi-cup-straw me-1"></i> Beverages: {{
+                                                        offer.includesBeverages ? 'Yes' : 'No' }}
+                                                    </p>
+
+                                                    <!-- Accommodation Details -->
+                                                    <p class="mb-2 small text-muted"
+                                                        *ngIf="requirement.type === 'Accommodation'">
+                                                        <span *ngIf="offer.totalRooms">
+                                                            <i class="bi bi-houses me-1"></i> {{ offer.totalRooms }}
+                                                            Rooms
+                                                            <br>
+                                                        </span>
+                                                        <span *ngIf="offer.perRoomCapacity">
+                                                            <i class="bi bi-people me-1"></i> Capacity: {{
+                                                            offer.perRoomCapacity }} / room
+                                                        </span>
+                                                    </p>
+
+                                                    <!-- Total Cost Display -->
+                                                    <p class="mb-2 fw-medium" *ngIf="requirement.type === 'Meal'">
+                                                        Total: PKR {{ offer.pricePerHead * requirement.estimatedPeople |
+                                                        number }}
+                                                    </p>
+                                                    <p class="mb-2 fw-medium"
+                                                        *ngIf="requirement.type === 'Accommodation' && offer.totalRent">
+                                                        Total: PKR {{ offer.totalRent | number }}
+                                                    </p>
+                                                    <div class="d-flex gap-2">
+                                                        <button class="btn btn-sm btn-success" *ngIf="!offer.isApproved"
+                                                            (click)="approveRestaurantOffer(requirement, offer)">
+                                                            <i class="bi bi-check-circle me-1"></i> View Offer
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger"
+                                                            *ngIf="offer.isApproved"
+                                                            (click)="unapproveRestaurantOffer(requirement, offer)">
+                                                            <i class="bi bi-x-circle me-1"></i> Unapprove
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-secondary"
+                                                            *ngIf="!offer.isApproved"
+                                                            (click)="rejectRestaurantOffer(offer)">
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer bg-success border-0 py-2"
+                                                    *ngIf="offer.isApproved">
+                                                    <small class="text-success fw-bold">
+                                                        <i class="bi bi-check-circle-fill me-1"></i> Approved - Order
+                                                        created
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MENU SELECTION MODAL -->
+    <app-menu-selection-modal [isVisible]="showMenuModal" [restaurantName]="selectedOffer?.restaurantName || ''"
+        [restaurantId]="selectedOffer?.restaurantId || 0" [offerType]="selectedOffer?.mealType || ''"
+        [quotedPricePerHead]="selectedOffer?.pricePerHead || 0"
+        [numberOfPeople]="selectedRequirement?.estimatedPeople || 0" (onConfirm)="onMenuConfirm($event)"
+        (onClose)="onMenuModalClose()">
+    </app-menu-selection-modal>
+
+    <!-- ACCOMMODATION OFFER MODAL -->
+    <div class="modal fade show d-block" *ngIf="showAccommodationModal" tabindex="-1"
+        style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 11000;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0">
+                    <div>
+                        <h5 class="modal-title fw-bold">Accommodation Offer Details</h5>
+                        <p class="text-muted small mb-0" *ngIf="selectedRequirement && selectedOffer">
+                            {{ selectedOffer.restaurantName }} - {{ selectedRequirement.location }}
+                        </p>
+                    </div>
+                    <button type="button" class="btn-close" (click)="onAccommodationModalClose()"></button>
+                </div>
+                <div class="modal-body">
+                    <div *ngIf="selectedRequirement && selectedOffer">
+                        <!-- Requirement Info -->
+                        <div class="alert alert-light mb-4">
+                            <h6 class="fw-bold mb-2">Requirement Details</h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Location</small>
+                                    <span class="fw-medium">{{ selectedRequirement.location }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Date</small>
+                                    <span class="fw-medium">{{ selectedRequirement.dateNeeded | date:'mediumDate'
+                                        }}</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">People</small>
+                                    <span class="fw-medium">{{ selectedRequirement.estimatedPeople }} guests</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Duration</small>
+                                    <span class="fw-medium">{{ selectedOffer.stayDurationDays || 1 }} night(s)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Offer Details or Room Category Selection -->
+                        <div class="card border-primary mb-3">
+                            <div class="card-header bg-primary-subtle border-primary">
+                                <h6 class="fw-bold mb-0 text-primary">
+                                    <i class="bi bi-building me-2"></i>Offer from {{ selectedOffer.restaurantName }}
+                                </h6>
+                            </div>
+
+                            <!-- Case 1: Pricing already exists (Legacy or Pre-calculated) -->
+                            <div class="card-body" *ngIf="!needsRoomCategorySelection(selectedOffer)">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label class="small text-muted d-block">Rent Per Room Per Night</label>
+                                        <h5 class="fw-bold text-primary mb-0">PKR {{ selectedOffer.rentPerNight | number
+                                            }}</h5>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="small text-muted d-block">Room Capacity</label>
+                                        <h5 class="fw-bold mb-0">{{ selectedOffer.perRoomCapacity }} people/room</h5>
+                                    </div>
+                                    <div class="col-12">
+                                        <hr class="my-2">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="small text-muted d-block">Total Rooms Needed</label>
+                                        <h5 class="fw-bold mb-0">{{ selectedOffer.totalRooms }} rooms</h5>
+                                        <small class="text-muted">
+                                            ({{ selectedRequirement.estimatedPeople }} ÷ {{
+                                            selectedOffer.perRoomCapacity }})
+                                        </small>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="small text-muted d-block">Total Cost</label>
+                                        <h5 class="fw-bold text-success mb-0">PKR {{ selectedOffer.totalRent | number }}
+                                        </h5>
+                                        <small class="text-muted">
+                                            ({{ selectedOffer.totalRooms }} × PKR {{ selectedOffer.rentPerNight | number
+                                            }} × {{ selectedOffer.stayDurationDays ||
+                                            selectedRequirement.stayDurationDays || 1 }} nights)
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Case 2: Needs Room Category Selection -->
+                            <div class="card-body" *ngIf="needsRoomCategorySelection(selectedOffer)">
+                                <div class="alert alert-warning border-0 mb-3">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Action Required:</strong> Please select a room category to finalize pricing.
+                                </div>
+
+                                <h6 class="fw-bold mb-3">Available Room Categories</h6>
+
+                                <div *ngIf="loadingRoomCategories" class="text-center py-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <div class="room-category-list" style="max-height: 300px; overflow-y: auto;">
+                                    <div *ngFor="let category of availableRoomCategories"
+                                        class="card mb-2 cursor-pointer"
+                                        [class.border-success]="selectedRoomCategory?.roomCategoryId === category.roomCategoryId"
+                                        [class.bg-light]="selectedRoomCategory?.roomCategoryId !== category.roomCategoryId"
+                                        (click)="selectRoomCategory(category)" style="cursor: pointer;">
+                                        <div class="card-body p-3">
+                                            <div class="d-flex align-items-center">
+                                                <img [src]="getPrimaryImage(category)" class="rounded me-3"
+                                                    style="width: 60px; height: 60px; object-fit: cover;">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="fw-bold mb-1">{{ category.categoryName }}</h6>
+                                                    <div class="d-flex gap-3 small text-muted">
+                                                        <span><i class="bi bi-people me-1"></i>{{ category.maxGuests }}
+                                                            guests</span>
+                                                        <span><i class="bi bi-door-closed me-1"></i>{{
+                                                            category.availableRooms }} left</span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-end">
+                                                    <h6 class="fw-bold text-primary mb-0">PKR {{ category.pricePerNight
+                                                        | number }}</h6>
+                                                    <small class="text-muted">per night</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Calculated Pricing Preview -->
+                                <div *ngIf="selectedRoomCategory && calculatedAccommodationPricing"
+                                    class="mt-3 p-3 bg-light rounded-3">
+                                    <h6 class="fw-bold mb-2 text-dark">Pricing Preview</h6>
+                                    <div class="row g-2 text-muted small">
+                                        <div class="col-6">
+                                            <span>Rooms Needed:</span>
+                                            <strong class="text-dark ms-1">{{ calculatedAccommodationPricing.totalRooms
+                                                }}</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <span>Duration:</span>
+                                            <strong class="text-dark ms-1">{{
+                                                calculatedAccommodationPricing.stayDurationDays }} nights</strong>
+                                        </div>
+                                        <div class="col-12 border-top pt-2 mt-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold text-dark">Total Cost:</span>
+                                                <span class="fw-bold text-success fs-5">PKR {{
+                                                    calculatedAccommodationPricing.totalCost | number }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cost Breakdown -->
+                        <!-- Cost Breakdown -->
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold mb-2">
+                                <i class="bi bi-calculator me-2"></i>Cost Breakdown
+                            </h6>
+
+                            <!-- Scenario 1: Pre-calculated / Legacy Offer -->
+                            <ng-container *ngIf="!needsRoomCategorySelection(selectedOffer)">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{{ selectedOffer.totalRooms }} rooms × PKR {{ selectedOffer.rentPerNight |
+                                        number
+                                        }}/night</span>
+                                    <span class="fw-medium">PKR {{ (selectedOffer.totalRooms! *
+                                        selectedOffer.rentPerNight!)
+                                        | number }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Duration</span>
+                                    <span class="fw-medium">{{ selectedOffer.stayDurationDays }} night(s)</span>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total Accommodation Cost</strong>
+                                    <strong class="text-success">PKR {{ selectedOffer.totalRent | number }}</strong>
+                                </div>
+                            </ng-container>
+
+                            <!-- Scenario 2: Calculated from Room Category Selection -->
+                            <ng-container *ngIf="needsRoomCategorySelection(selectedOffer)">
+                                <ng-container *ngIf="calculatedAccommodationPricing; else noCategorySelected">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>{{ calculatedAccommodationPricing.totalRooms }} rooms × PKR {{
+                                            calculatedAccommodationPricing.rentPerNight | number
+                                            }}/night</span>
+                                        <span class="fw-medium">PKR {{ (calculatedAccommodationPricing.totalRooms *
+                                            calculatedAccommodationPricing.rentPerNight)
+                                            | number }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Duration</span>
+                                        <span class="fw-medium">{{ calculatedAccommodationPricing.stayDurationDays }}
+                                            night(s)</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>Total Accommodation Cost</strong>
+                                        <strong class="text-success">PKR {{ calculatedAccommodationPricing.totalCost |
+                                            number }}</strong>
+                                    </div>
+                                </ng-container>
+                                <ng-template #noCategorySelected>
+                                    <div class="text-center text-muted small py-2">
+                                        Select a room category to see cost breakdown
+                                    </div>
+                                </ng-template>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="onAccommodationModalClose()">Cancel</button>
+                    <button type="button" class="btn btn-success" (click)="approveAccommodationOffer()">
+                        <i class="bi bi-check-circle me-1"></i> Approve Offer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <!-- Confirmation Modal -->
+    <app-confirm-modal *ngIf="showConfirmModal" [title]="confirmTitle" [message]="confirmMessage"
+        [confirmText]="confirmText" [cancelText]="cancelText" [confirmVariant]="confirmType" (confirm)="confirmAction()"
+        (cancel)="showConfirmModal = false">
+    </app-confirm-modal>
+
+</div>

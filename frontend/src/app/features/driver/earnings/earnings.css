@@ -1,0 +1,20 @@
+.bg-success-subtle-custom {
+    background-color: #ecfdf5;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .08) !important;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+}
+
+.badge {
+    font-weight: 500;
+}

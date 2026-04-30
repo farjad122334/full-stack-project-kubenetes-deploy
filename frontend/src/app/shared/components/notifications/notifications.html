@@ -1,0 +1,78 @@
+<div class="container-fluid mb-5 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Notifications</h2>
+            <p class="text-muted mb-0">Stay updated with your latest activities</p>
+        </div>
+        <span class="badge bg-primary rounded-pill px-3 py-2" *ngIf="unreadCount > 0">{{ unreadCount }} New</span>
+    </div>
+
+    <div class="d-flex gap-2 mb-4">
+        <button class="btn btn-primary px-4 rounded-pill" (click)="markAllAsRead()" [disabled]="unreadCount === 0">
+            <i class="bi bi-check2-all me-2"></i>Mark All as Read
+        </button>
+        <button class="btn btn-light px-4 rounded-pill" (click)="clearAll()" [disabled]="notifications.length === 0">
+            <i class="bi bi-trash me-2"></i>Clear All
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column gap-3" *ngIf="!isLoading && notifications.length > 0; else emptyState">
+        <div class="card border-0 shadow-sm animate-fade-in cursor-pointer notification-card"
+            *ngFor="let notification of notifications" [class.unread]="!notification.isRead"
+            (click)="onNotificationClick(notification)">
+            <div class="card-body p-4 d-flex align-items-start">
+                <div class="rounded-circle p-3 d-flex align-items-center justify-content-center me-3"
+                    [ngClass]="getIconClass(notification.type)" style="width: 48px; height: 48px; flex-shrink: 0;">
+                    <i class="bi fs-4" [ngClass]="getBootstrapIcon(notification.type)"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="fw-bold mb-0 text-dark">
+                            {{ notification.title }}
+                            <span class="d-inline-block bg-primary rounded-circle ms-2" style="width: 8px; height: 8px;"
+                                *ngIf="!notification.isRead"></span>
+                        </h6>
+                        <small class="text-muted">{{ formatTime(notification.createdAt) }}</small>
+                    </div>
+                    <p class="text-muted mb-0 small">{{ notification.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #emptyState>
+        <div *ngIf="!isLoading" class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5 text-muted">
+                <div class="display-1 mb-3 text-secondary opacity-25">
+                    <i class="bi bi-bell-slash"></i>
+                </div>
+                <h3>No Notifications</h3>
+                <p>You're all caught up! Check back later for updates.</p>
+            </div>
+        </div>
+    </ng-template>
+</div>
+
+<style>
+    .notification-card {
+        transition: all 0.2s ease;
+        border-left: 4px solid transparent !important;
+    }
+
+    .notification-card:hover {
+        transform: translateY(-2px);
+        background-color: #f8f9fa;
+    }
+
+    .notification-card.unread {
+        border-left-color: #0d6efd !important;
+        background-color: #f0f7ff;
+    }
+</style>

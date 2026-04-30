@@ -1,0 +1,292 @@
+<div class="container-fluid py-4 px-5">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h4 class="mb-1 text-dark fw-bold">Plan a New Tour</h4>
+        <p class="text-muted">Create and customize tour packages for your clients</p>
+    </div>
+
+    <!-- Stepper -->
+    <div class="card border-0 shadow-sm mb-4 rounded-4">
+        <div class="card-body py-4">
+
+            <div class="stepper">
+
+                <!-- Progress Line -->
+                <div class="stepper-line"></div>
+
+                <!-- Step 1 -->
+                <div class="step-item" [class.active]="currentStep >= 1">
+                    <div class="step-circle">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <span>Tour Details</span>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-item" [class.active]="currentStep >= 2">
+                    <div class="step-circle">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <span>Pricing</span>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-item" [class.active]="currentStep >= 3">
+                    <div class="step-circle">
+                        <i class="bi bi-list-check"></i>
+                    </div>
+                    <span>Requirements</span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Step 1: Basic Tour Information -->
+    <div class="card border-0 shadow-sm rounded-4" *ngIf="currentStep === 1">
+        <div class="card-body p-5">
+            <h5 class="fw-bold mb-1">Basic Tour Information</h5>
+            <p class="text-muted mb-4">Enter the main details about the tour package</p>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Tour Name</label>
+                    <input type="text" class="form-control bg-light border-0 py-2"
+                        placeholder="e.g., Northern Areas Adventure" [(ngModel)]="tourName">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Destination</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" placeholder="e.g., Hunza Valley"
+                        [(ngModel)]="destination">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Departure City</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" placeholder="e.g., Rawalpindi"
+                        [(ngModel)]="departureCity">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Exact Departure Location</label>
+                    <input type="text" class="form-control bg-light border-0 py-2" placeholder="e.g., Faizabad Bus Stop"
+                        [(ngModel)]="departureLocation">
+                    <small class="text-muted">Or pick a location on the map below</small>
+                </div>
+
+                <div class="col-12">
+                    <div #mapContainer id="map" style="height: 300px; width: 100%; border-radius: 12px;" class="shadow-sm border"></div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Start Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control bg-light border-0 py-2" [(ngModel)]="startDate">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">End Date</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control bg-light border-0 py-2" [(ngModel)]="endDate">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Max Participants</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" placeholder="e.g., 15"
+                        [(ngModel)]="maxParticipants">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Tour Type</label>
+                    <select class="form-select bg-light border-0 py-2" [(ngModel)]="tourType">
+                        <option value="" selected disabled>Select type</option>
+                        <option value="adventure">Adventure</option>
+                        <option value="family">Family</option>
+                        <option value="honeymoon">Honeymoon</option>
+                    </select>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold small">Tour Cover Image</label>
+                    <div class="image-upload-wrapper" (click)="imageInput.click()">
+                        <input type="file" #imageInput hidden (change)="onImageSelected($event)" accept="image/*">
+                        <div class="image-placeholder" *ngIf="!imagePreview">
+                            <i class="bi bi-cloud-arrow-up fs-2"></i>
+                            <p class="mb-0 small">Click to upload cover image</p>
+                            <span class="text-muted extra-small">Supports JPG, PNG (Max 5MB)</span>
+                        </div>
+                        <img [src]="imagePreview" *ngIf="imagePreview" class="preview-img">
+                        <div class="change-overlay" *ngIf="imagePreview">
+                            <i class="bi bi-camera"></i> Change Image
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-bold small">Description</label>
+                    <textarea class="form-control bg-light border-0" rows="4"
+                        placeholder="Describe the tour experience, highlights, and what makes it special..."
+                        [(ngModel)]="description"></textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-end gap-3 mt-5">
+                <button class="btn btn-outline-secondary px-4 fw-bold" (click)="saveAsDraft()">Save as Draft</button>
+                <button class="btn btn-primary px-4 fw-bold" (click)="nextStep()">Next: Pricing</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Step 2: Pricing -->
+    <div class="card border-0 shadow-sm rounded-4" *ngIf="currentStep === 2">
+        <div class="card-body p-5">
+            <h5 class="fw-bold mb-1">Pricing & Discounts</h5>
+            <p class="text-muted mb-4">Set the pricing for your tour</p>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Base Price per Person</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" placeholder="e.g., 25000"
+                        [(ngModel)]="basePrice">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Couple Discount (%)</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" placeholder="e.g., 10"
+                        [(ngModel)]="coupleDiscount">
+                    <small class="text-muted d-block mt-1">Suggestion: Shown on frontend</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold small">Bulk Discount (%)</label>
+                    <input type="number" class="form-control bg-light border-0 py-2" placeholder="e.g., 15"
+                        [(ngModel)]="bulkDiscount">
+                    <small class="text-muted d-block mt-1">Suggestion: Shown for group bookings</small>
+                </div>
+            </div>
+
+            <!-- Estimated Total Revenue -->
+            <div class="mt-5 p-4 rounded-3 d-flex justify-content-between align-items-center"
+                style="background-color: #cfe2ff;">
+                <div>
+                    <h6 class="mb-1 text-muted">Estimated Total Revenue</h6>
+                    <h4 class="mb-0 fw-bold" style="color: #084298;">PKR 375,000</h4>
+                </div>
+                <div>
+                    <i class="bi bi-currency-dollar fs-1" style="color: #0d6efd;"></i>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between mt-5">
+                <button class="btn btn-outline-secondary px-4 fw-bold" (click)="prevStep()">Previous</button>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-outline-secondary px-4 fw-bold" (click)="saveAsDraft()">Save as
+                        Draft</button>
+                    <button class="btn btn-primary px-4 fw-bold" (click)="nextStep()">Next:
+                        Requirements</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Service Requirements (Marketplace) -->
+    <div class="card border-0 shadow-sm rounded-4" *ngIf="currentStep === 3">
+        <div class="card-body p-5">
+            <h5 class="fw-bold mb-1">Service Requirements</h5>
+            <p class="text-muted mb-4">Post specific needs for vendors (Transport, Meals, Rooms)</p>
+
+            <div class="row g-4">
+                <!-- Requirements List -->
+                <div class="col-12" *ngFor="let req of featureRequirements; let i = index">
+                    <div class="p-3 border rounded-3 bg-white position-relative">
+                        <button class="btn-close position-absolute top-0 end-0 m-2 small"
+                            (click)="removeRequirement(i)"></button>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="badge bg-primary p-2 rounded-2">
+                                <i class="bi" [class.bi-egg-fried]="req.serviceType === 'Meal'"
+                                    [class.bi-house]="req.serviceType === 'Accommodation'"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{req.serviceType}} in {{req.location}}</h6>
+                                <p class="text-muted small mb-0" *ngIf="req.serviceType === 'Meal'">
+                                    {{req.dateNeeded | date:'MMM d, y'}}
+                                    <span *ngIf="req.time"> at {{req.time}}</span>
+                                </p>
+                                <p class="text-muted small mb-0"
+                                    *ngIf="req.serviceType === 'Accommodation' && req.stayDurationDays">
+                                    <span *ngIf="req.stayDurationDays === 1">{{req.dateNeeded | date:'MMM d, y'}}</span>
+                                    <span *ngIf="req.stayDurationDays && req.stayDurationDays > 1">
+                                        {{req.dateNeeded | date:'MMM d'}} - {{getEndDate(req.dateNeeded,
+                                        req.stayDurationDays) | date:'MMM d, y'}} ({{req.stayDurationDays}} nights)
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="ms-auto text-end">
+                                <div class="badge bg-light text-dark border">{{req.serviceType}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Requirement Form -->
+                <div class="col-12 mt-4 p-4 bg-light rounded-3">
+                    <h6 class="fw-bold mb-3">Add New Requirement</h6>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Type</label>
+                            <select class="form-select border-0 shadow-sm" [(ngModel)]="newReqType">
+                                <option value="Meal">Meal</option>
+                                <option value="Accommodation">Accommodation</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Location</label>
+                            <input type="text" class="form-control border-0 shadow-sm" [(ngModel)]="newReqLocation"
+                                placeholder="e.g. Naran">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">Date</label>
+                            <input type="date" class="form-control border-0 shadow-sm" [(ngModel)]="newReqDate">
+                        </div>
+
+                        <!-- Conditional: Time for Meal -->
+                        <div class="col-md-3" *ngIf="newReqType === 'Meal'">
+                            <label class="form-label small fw-bold">Time (Optional)</label>
+                            <input type="time" class="form-control border-0 shadow-sm" [(ngModel)]="newReqTime">
+                        </div>
+
+                        <!-- Conditional: Duration for Accommodation -->
+                        <div class="col-md-3" *ngIf="newReqType === 'Accommodation'">
+                            <label class="form-label small fw-bold">Nights</label>
+                            <input type="number" class="form-control border-0 shadow-sm" [(ngModel)]="newReqDuration"
+                                min="1" placeholder="e.g. 2">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold">&nbsp;</label>
+                            <button class="btn btn-dark w-100 fw-bold shadow-sm" (click)="addRequirement()">+ Add
+                                Requirement</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between mt-5">
+                <button class="btn btn-outline-secondary px-4 fw-bold" (click)="prevStep()">Previous</button>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-outline-secondary px-4 fw-bold" (click)="saveAsDraft()">Save as
+                        Draft</button>
+                    <button class="btn btn-primary px-4 fw-bold" (click)="createTourPlan()">Create Tour
+                        Plan</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

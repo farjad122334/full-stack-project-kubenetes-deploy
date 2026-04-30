@@ -1,0 +1,164 @@
+<div class="container-fluid p-0">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">My Vehicles</h3>
+            <p class="text-muted mb-0">Manage your transport fleet and vehicle details.</p>
+        </div>
+        <button class="btn btn-primary d-flex align-items-center gap-2 px-4 py-2 rounded-3 shadow-sm"
+            (click)="openAddModal()">
+            <i class="bi bi-plus-lg"></i> Add New Vehicle
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="d-flex justify-content-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && vehicles.length === 0"
+        class="text-center py-5 bg-white rounded-4 shadow-sm border border-light">
+        <div class="mb-3">
+            <i class="bi bi-car-front text-muted opacity-25" style="font-size: 4rem;"></i>
+        </div>
+        <h5 class="fw-bold text-dark">No Vehicles Registered</h5>
+        <p class="text-muted mx-auto" style="max-width: 350px;">
+            You haven't added any vehicles yet. Add your first vehicle to start receiving tour bids.
+        </p>
+        <button class="btn btn-outline-primary mt-3 px-4" (click)="openAddModal()">
+            Register a Vehicle
+        </button>
+    </div>
+
+    <!-- Vehicles List -->
+    <div *ngIf="!isLoading && vehicles.length > 0" class="row g-4">
+        <div class="col-md-6 col-lg-4" *ngFor="let vehicle of vehicles">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden vehicle-card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="icon-box bg-primary-subtle rounded-3 p-3 text-primary">
+                                <i class="bi fs-3" [ngClass]="getVehicleIcon(vehicle.vehicleType)"></i>
+                            </div>
+                            <!-- Primary Image Thumb -->
+                            <div class="vehicle-thumb" *ngIf="vehicle.vehicleImages?.length > 0">
+                                <img [src]="vehicle.vehicleImages[0].imageUrl" class="rounded-2 shadow-sm"
+                                    alt="Vehicle">
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm rounded-circle p-2 border-0" type="button"
+                                data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                                <li><a class="dropdown-item text-danger d-flex align-items-center gap-2"
+                                        href="javascript:void(0)" (click)="deleteVehicle(vehicle.vehicleId)">
+                                        <i class="bi bi-trash"></i> Remove Vehicle
+                                    </a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5 class="fw-bold text-dark mb-1">{{ vehicle.model }}</h5>
+                        <p class="text-muted small mb-0">{{ vehicle.vehicleType }}</p>
+                    </div>
+
+                    <div class="bg-light rounded-3 p-3 mb-3">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <small class="text-muted d-block font-xs text-uppercase fw-bold">Reg. Number</small>
+                                <span class="fw-medium text-dark">{{ vehicle.registrationNumber }}</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted d-block font-xs text-uppercase fw-bold">Capacity</small>
+                                <span class="fw-medium text-dark">{{ vehicle.capacity }} People</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mt-auto">
+                        <span class="badge"
+                            [ngClass]="{'bg-success-subtle text-success': vehicle.status === 'Active', 'bg-warning-subtle text-warning': vehicle.status !== 'Active'}">
+                            {{ vehicle.status }}
+                        </span>
+                        <div class="small text-muted">
+                            <i class="bi bi-check2-circle text-success me-1"></i> Verified
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Vehicle Modal -->
+<div class="modal-overlay" *ngIf="showAddModal" (click)="closeAddModal()">
+    <div class="modal-content-wrapper p-4 animate-slide-up" (click)="$event.stopPropagation()">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold text-dark mb-0">Add New Vehicle</h4>
+            <button class="btn btn-light rounded-circle p-2 border-0" (click)="closeAddModal()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form (ngSubmit)="addVehicle()">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-dark">Registration Number</label>
+                    <input type="text" class="form-control rounded-3" name="reg"
+                        [(ngModel)]="newVehicle.registrationNumber" placeholder="e.g. LEC-1234">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-bold text-dark">Vehicle Type</label>
+                    <select class="form-select rounded-3" name="type" [(ngModel)]="newVehicle.vehicleType">
+                        <option value="">Select Type</option>
+                        <option value="Car">Car</option>
+                        <option value="Hiace">Hiace / Van</option>
+                        <option value="Coaster">Coaster / Mini Bus</option>
+                        <option value="Bus">Bus</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-bold text-dark">Vehicle Model / Name</label>
+                    <input type="text" class="form-control rounded-3" name="model" [(ngModel)]="newVehicle.model"
+                        placeholder="e.g. Toyota Coaster 2024">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small fw-bold text-dark">Seating Capacity</label>
+                    <input type="number" class="form-control rounded-3" name="capacity"
+                        [(ngModel)]="newVehicle.capacity" placeholder="e.g. 29">
+                </div>
+                <div class="col-6">
+                    <label class="form-label small fw-bold text-dark">Initial Status</label>
+                    <select class="form-select rounded-3" name="status" [(ngModel)]="newVehicle.status">
+                        <option value="Active">Active</option>
+                        <option value="Maintenance">Under Maintenance</option>
+                    </select>
+                </div>
+                <!-- Image Upload -->
+                <div class="col-12 mt-3">
+                    <label class="form-label small fw-bold text-dark d-block">Vehicle Photos</label>
+                    <app-image-uploader (imagesSelected)="onImagesSelected($event)" [multiple]="true">
+                    </app-image-uploader>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top d-flex gap-3">
+                <button type="button" class="btn btn-light w-100 py-2 rounded-3 fw-bold"
+                    (click)="closeAddModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 fw-bold">Register Vehicle</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Custom Confirm Modal -->
+<app-confirm-modal *ngIf="showConfirmModal" [title]="confirmTitle" [message]="confirmMessage"
+    [confirmText]="confirmText" [confirmVariant]="confirmType" (confirm)="confirmAction()"
+    (cancel)="showConfirmModal = false">
+</app-confirm-modal>

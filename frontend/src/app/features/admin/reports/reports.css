@@ -1,0 +1,440 @@
+:host {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+    /* Light grey background for the whole page */
+}
+
+.reports-container {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.reports-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+}
+
+.title-section h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #1e293b;
+}
+
+.title-section p {
+    color: #64748b;
+    margin: 0;
+    font-size: 14px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.date-range-display {
+    background: #f1f5f9;
+    padding: 10px 16px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-export-all {
+    background: #00bfa5;
+    /* Teal color from screenshot */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.btn-export-all:hover {
+    background: #009688;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.metric-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    /* Center vertically */
+    justify-content: space-between;
+    transition: transform 0.2s;
+}
+
+.metric-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.metric-title {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.sub-value {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    /* Slightly rounded squares */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* Specific Colors from screenshot */
+.metric-icon.cyan {
+    background: #ccfbf1;
+    color: #0d9488;
+}
+
+/* Map marker */
+.metric-icon.blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Users */
+.metric-icon.green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* Revenue */
+.metric-icon.orange {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+/* Invoice */
+
+/* Chart Section */
+.chart-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.btn-sm-export {
+    background: white;
+    border: 1px solid #cbd5e1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #334155;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-sm-export:hover {
+    background: #f8fafc;
+}
+
+.chart-container {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    margin-bottom: 16px;
+}
+
+/* Chart Lines */
+.line {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.line.customers {
+    stroke: #3b82f6;
+}
+
+/* Blue */
+.line.revenue {
+    stroke: #f59e0b;
+}
+
+/* Orange */
+.line.tours {
+    stroke: #14b8a6;
+}
+
+/* Teal */
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 10px;
+}
+
+.legend-item {
+    font-size: 13px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px;
+}
+
+.dot.customers {
+    box-shadow: 0 0 0 1px #3b82f6;
+    background: white;
+}
+
+.dot.revenue {
+    box-shadow: 0 0 0 1px #f59e0b;
+    background: white;
+}
+
+.dot.tours {
+    box-shadow: 0 0 0 1px #14b8a6;
+    background: white;
+}
+
+.labels text {
+    font-family: 'Inter', sans-serif;
+    fill: #64748b;
+    font-size: 11px;
+}
+
+/* Split Sections */
+.split-section {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    /* Fixed width for destinations to match ratio */
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+    .split-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Destinations */
+.bar-chart {
+    height: 250px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 20px 0 40px 0;
+    /* Extra bottom margin for rotated labels */
+}
+
+.bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40px;
+    height: 100%;
+    position: relative;
+}
+
+.bar-wrapper {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    background: transparent;
+}
+
+.bar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    position: relative;
+}
+
+.bar.teal {
+    background: #14b8a6;
+}
+
+.label.rotated {
+    position: absolute;
+    bottom: -35px;
+    font-size: 11px;
+    color: #64748b;
+    white-space: nowrap;
+    transform: rotate(-45deg);
+    transform-origin: center top;
+}
+
+/* Drivers List */
+.drivers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.driver-item {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.driver-details {
+    width: 100%;
+}
+
+.d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.driver-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.driver-revenue {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.sub-details {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.driver-rating i {
+    color: #eab308;
+    font-size: 12px;
+}
+
+.revenue-label {
+    font-size: 11px;
+    color: #94a3b8;
+    display: block;
+    text-align: right;
+    line-height: 1;
+}
+
+/* Export Section */
+.export-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #1e293b;
+}
+
+.export-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.export-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.export-btn:hover {
+    border-color: #00bfa5;
+    box-shadow: 0 4px 12px rgba(0, 191, 165, 0.1);
+}
+
+.export-btn i {
+    font-size: 24px;
+    color: #334155;
+}
+
+.export-btn span {
+    font-weight: 500;
+    color: #334155;
+}

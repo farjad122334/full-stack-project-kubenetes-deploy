@@ -1,0 +1,173 @@
+<div class="driver-details-container">
+    <!-- Back Button & Header -->
+    <div class="page-header">
+        <a routerLink="/admin/manage-drivers" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Drivers
+        </a>
+        <div class="header-main">
+            <div class="title-section">
+                <h1>Driver Profile Details</h1>
+                <p>Review documents and manage vehicles</p>
+            </div>
+            <div class="header-actions" *ngIf="driver && driver.accountStatus === 'Pending'">
+                <button class="btn-success" (click)="approveDriver()">Verify Account</button>
+                <button class="btn-danger" (click)="rejectDriver()">Reject Account</button>
+            </div>
+            <div class="status-indicator" *ngIf="driver && driver.accountStatus !== 'Pending'">
+                <span class="status-badge" [ngClass]="driver.accountStatus.toLowerCase()">
+                    {{ driver.accountStatus }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading driver details...</p>
+    </div>
+
+    <div *ngIf="!loading && driver" class="content-grid">
+        <!-- Profile Card -->
+        <div class="info-card profile-card">
+            <div class="card-header">
+                <h3>General Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="profile-main">
+                    <img [src]="driver.avatar" alt="Avatar" class="driver-avatar">
+                    <div class="profile-info">
+                        <h2>{{ driver.name }}</h2>
+                        <span class="driver-id">ID: D{{ driver.driverId.toString().padStart(3, '0') }}</span>
+                    </div>
+                </div>
+                <div class="info-list">
+                    <div class="info-item">
+                        <label>Phone Number</label>
+                        <span>{{ driver.contact }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Email Address</label>
+                        <span>{{ driver.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>CNIC Number</label>
+                        <span>{{ driver.cnic }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>License Number</label>
+                        <span>{{ driver.license }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trips & Rating Card -->
+        <div class="info-card stats-card">
+            <div class="card-header">
+                <h3>Performance Stats</h3>
+            </div>
+            <div class="card-body stats-grid">
+                <div class="stat-item">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <div class="stat-val">
+                        <span class="main">{{ driver.rating || 'N/A' }}</span>
+                        <span class="sub">Average Rating</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="bi bi-truck text-primary"></i>
+                    <div class="stat-val">
+                        <span class="main">{{ driver.totalTrips }}</span>
+                        <span class="sub">Total Trips</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents Card -->
+        <div class="info-card documents-card">
+            <div class="card-header">
+                <h3>Verification Documents</h3>
+            </div>
+            <div class="card-body">
+                <div class="documents-grid">
+                    <div class="doc-view">
+                        <label>CNIC Front</label>
+                        <div class="image-container">
+                            <img [src]="driver.documents.cnicFront" alt="CNIC Front">
+                        </div>
+                    </div>
+                    <div class="doc-view">
+                        <label>CNIC Back</label>
+                        <div class="image-container">
+                            <img [src]="driver.documents.cnicBack" alt="CNIC Back">
+                        </div>
+                    </div>
+                    <div class="doc-view">
+                        <label>Driving License</label>
+                        <div class="image-container">
+                            <img [src]="driver.documents.license" alt="License">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicles Card -->
+        <div class="info-card vehicles-card">
+            <div class="card-header">
+                <h3>Registered Vehicles</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Vehicle</th>
+                                <th>Type</th>
+                                <th>Capacity</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let vehicle of driver.vehicles">
+                                <td>
+                                    <div class="vehicle-cell">
+                                        <span class="model">{{ vehicle.model }}</span>
+                                        <span class="reg">{{ vehicle.registrationNumber }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ vehicle.vehicleType }}</td>
+                                <td>{{ vehicle.capacity }} seats</td>
+                                <td>
+                                    <span class="status-badge" [ngClass]="vehicle.status.toLowerCase()">
+                                        {{ vehicle.status }}
+                                    </span>
+                                </td>
+                                <td class="actions">
+                                    <ng-container *ngIf="vehicle.status === 'Pending'">
+                                        <button class="btn-approve" (click)="approveVehicle(vehicle.vehicleId)"
+                                            title="Approve">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn-reject" (click)="rejectVehicle(vehicle.vehicleId)"
+                                            title="Reject">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </ng-container>
+                                    <span *ngIf="vehicle.status !== 'Pending'" class="action-done">
+                                        {{ vehicle.status === 'Active' ? 'Verified' : 'Rejected' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="driver.vehicles.length === 0">
+                                <td colspan="5" class="empty-row">No vehicles registered.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.rating-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #eee;
+}
+
+.rating-row:last-of-type {
+    border-bottom: none;
+}
+
+.fade-in {
+    animation: fadeIn ease 0.3s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stars i {
+    transition: transform 0.2s, color 0.2s;
+}
+
+.stars i:hover {
+    transform: scale(1.1);
+}

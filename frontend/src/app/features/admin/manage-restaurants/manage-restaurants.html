@@ -1,0 +1,183 @@
+<div class="manage-restaurants-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="title-section">
+            <h1>Manage Restaurants & Hotels</h1>
+            <p>Review and verify restaurant registrations</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-card">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search by name, email, or location..." [(ngModel)]="searchTerm">
+        </div>
+
+        <div class="filter-tabs">
+            <button [class.active]="activeTab === 'all'" (click)="setActiveTab('all')">All Partners</button>
+            <button [class.active]="activeTab === 'verified'" (click)="setActiveTab('verified')">Verified</button>
+            <button [class.active]="activeTab === 'pending'" (click)="setActiveTab('pending')">Pending</button>
+        </div>
+    </div>
+
+    <!-- Restaurant List -->
+    <div class="list-card">
+        <h3>Partner List</h3>
+
+        <div class="table-responsive" *ngIf="!loading && !error">
+            <table class="restaurants-table">
+                <thead>
+                    <tr>
+                        <th>Restaurant/Hotel</th>
+                        <th>Type</th>
+                        <th>Contact</th>
+                        <th>Location</th>
+                        <th>Owner</th>
+                        <th>Business License</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let partner of filteredPartners">
+                        <!-- Restaurant Info -->
+                        <td class="restaurant-info">
+                            <img [src]="partner.imageUrl" [alt]="partner.name">
+                            <div>
+                                <span class="name">{{ partner.name }}</span>
+                                <span class="id">{{ partner.email }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Type -->
+                        <td>
+                            <span class="type-badge" [ngClass]="partner.type.toLowerCase()">
+                                {{ partner.type }}
+                            </span>
+                        </td>
+
+                        <!-- Contact -->
+                        <td>
+                            <div class="contact-info">
+                                <span>{{ partner.phone }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Location -->
+                        <td class="location-text">{{ partner.location }}</td>
+
+                        <!-- Owner -->
+                        <td>{{ partner.capacity }}</td>
+
+                        <!-- Business License -->
+                        <td>
+                            <button class="btn-icon view-license-btn" *ngIf="partner.businessLicense"
+                                (click)="viewLicense(partner)" title="View License">
+                                <i class="bi bi-file-earmark-text"></i> View
+                            </button>
+                            <span class="no-data" *ngIf="!partner.businessLicense">Not uploaded</span>
+                        </td>
+
+                        <!-- Rating -->
+                        <td>
+                            <div class="rating" *ngIf="partner.rating > 0">
+                                <span class="score">{{ partner.rating }}</span>
+                                <i class="bi bi-star-fill star-icon"></i>
+                            </div>
+                            <span class="new-badge" *ngIf="partner.rating === 0">New</span>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <span class="status-badge" [ngClass]="partner.status.toLowerCase()">
+                                {{ partner.status }}
+                            </span>
+                        </td>
+
+                        <!-- Actions/Status -->
+                        <td class="actions-cell">
+                            <ng-container *ngIf="partner.status === 'Pending'">
+                                <button class="btn-success" (click)="approveRestaurant(partner.id)">
+                                    <i class="bi bi-check-lg"></i> Approve
+                                </button>
+                                <button class="btn-danger" (click)="rejectRestaurant(partner.id)">
+                                    <i class="bi bi-x-lg"></i> Reject
+                                </button>
+                            </ng-container>
+                            <ng-container *ngIf="partner.status === 'Verified'">
+                                <span class="action-text success">Active</span>
+                            </ng-container>
+                            <ng-container *ngIf="partner.status === 'Rejected'">
+                                <span class="action-text danger">Rejected</span>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Loading State -->
+        <div class="empty-state" *ngIf="loading">
+            <p>Loading restaurants...</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="empty-state" *ngIf="error && !loading">
+            <p>{{ error }}</p>
+            <button class="btn-primary" (click)="loadRestaurants()">Retry</button>
+        </div>
+
+        <!-- Empty State: No Restaurants in System -->
+        <div class="empty-state" *ngIf="!loading && !error && partners.length === 0">
+            <p>No restaurants registered yet.</p>
+        </div>
+
+        <!-- Empty State: No Search Results -->
+        <div class="empty-state" *ngIf="!loading && !error && partners.length > 0 && filteredPartners.length === 0">
+            <p>No restaurants found matching your criteria.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="showConfirmModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header" [ngClass]="confirmType">
+            <i class="bi bi-check-circle-fill" *ngIf="confirmType === 'approve'"></i>
+            <i class="bi bi-exclamation-circle-fill" *ngIf="confirmType === 'reject'"></i>
+            <h3>{{ confirmType === 'approve' ? 'Approve Restaurant' : 'Reject Restaurant' }}</h3>
+        </div>
+
+        <div class="modal-body">
+            <p>{{ confirmMessage }}</p>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button [class]="confirmType === 'approve' ? 'btn-confirm-approve' : 'btn-confirm-reject'"
+                (click)="onConfirm()">
+                {{ confirmType === 'approve' ? 'Yes, Approve' : 'Yes, Reject' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Business License Modal -->
+<div class="modal-backdrop" *ngIf="showLicenseModal" (click)="closeLicenseModal()">
+    <div class="modal-container license-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Business License</h3>
+            <button class="close-btn" (click)="closeLicenseModal()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body license-body" *ngIf="selectedPartner">
+            <div class="license-item">
+                <label>{{ selectedPartner.name }} - Business License</label>
+                <div class="img-wrapper">
+                    <img [src]="selectedPartner.businessLicense" alt="Business License">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

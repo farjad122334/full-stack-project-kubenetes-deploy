@@ -1,0 +1,152 @@
+<div class="container-fluid mb-5 p-4">
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark mb-1">Trip History</h2>
+        <p class="text-muted">View all your completed tours and travel memories</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="alert alert-danger">
+        {{ error }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && !error && trips.length === 0" class="text-center py-5">
+        <i class="bi bi-clock-history fs-1 text-muted"></i>
+        <h4 class="mt-3 text-secondary">No trip history found</h4>
+        <p class="text-muted">You haven't completed any tours yet. Once a tour is finished, it will appear here!</p>
+        <a routerLink="/tourist/explore" class="btn btn-primary px-4 rounded-pill mt-2">Explore Tours</a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div *ngIf="!isLoading && !error && trips.length > 0" class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 text-white h-100" style="background-color: #1a73e8;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-white-50 mb-1 small">Total Trips</div>
+                        <div class="display-6 fw-bold mb-1">{{ totalTrips }}</div>
+                        <div class="text-white-50 small">Completed journeys</div>
+                    </div>
+                    <div class="icon-box bg-white bg-opacity-25 rounded-3 p-3">
+                        <i class="bi bi-check-circle fs-3 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 text-white h-100" style="background-color: #00c853;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-white-50 mb-1 small">Total Spent</div>
+                        <div class="display-6 fw-bold mb-1 text-nowrap">PKR {{ totalSpent | number }}</div>
+                        <div class="text-white-50 small">On amazing adventures</div>
+                    </div>
+                    <div class="icon-box bg-white bg-opacity-25 rounded-3 p-3">
+                        <i class="bi bi-geo-alt fs-3 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-md-4">
+            <div class="card border-0 text-white h-100" style="background-color: #a855f7;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-white-50 mb-1 small">Avg Rating</div>
+                        <div class="display-6 fw-bold mb-1">{{ avgRating }}/5.0</div>
+                        <div class="text-white-50 small">Your satisfaction</div>
+                    </div>
+                    <div class="icon-box bg-white bg-opacity-25 rounded-3 p-3">
+                        <i class="bi bi-star-fill fs-3 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
+    <!-- Trip List -->
+    <div *ngIf="!isLoading && !error && trips.length > 0" class="d-flex flex-column gap-3">
+        <div class="card border-0 shadow-sm animate-fade-in" *ngFor="let trip of trips">
+            <div class="card-body p-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="fw-bold text-dark mb-0">{{ trip.title }}</h5>
+                        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1 fw-normal">
+                            <i class="bi bi-check-circle me-1"></i> {{ trip.status }}
+                        </span>
+                    </div>
+                    <div class="text-end">
+                        <div class="small text-muted mb-1">Amount Paid</div>
+                        <h5 class="fw-bold text-dark mb-0">PKR {{ trip.totalCost | number }}</h5>
+                    </div>
+                </div>
+
+                <div class="mb-3 text-muted small">Trip ID: {{ trip.id }}</div>
+
+                <!-- Details Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="d-flex">
+                            <i class="bi bi-geo-alt text-primary mt-1 me-3 fs-5"></i>
+                            <div>
+                                <div class="text-muted small">Destination</div>
+                                <div class="text-dark fw-medium">{{ trip.destination }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex">
+                            <i class="bi bi-calendar-event text-success mt-1 me-3 fs-5"></i>
+                            <div>
+                                <div class="text-muted small">Travel Period</div>
+                                <div class="text-dark fw-medium">{{ trip.startDate }} - {{ trip.endDate }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-muted small">Duration & Travelers</div>
+                                <div class="text-dark fw-medium">{{ trip.duration }} • {{ trip.persons }} persons</div>
+                            </div>
+                            <!-- Shimmer button shown only when not yet rated -->
+                            <button *ngIf="!trip.hasRated" class="btn btn-shimmer d-flex align-items-center gap-2 px-4"
+                                (click)="openRatingModal(trip.tourId)">
+                                <i class="bi bi-pencil-square"></i> Complete Rating
+                            </button>
+                            <!-- Badge shown when already rated -->
+                            <span *ngIf="trip.hasRated" class="btn-rated">
+                                <i class="bi bi-check-circle-fill"></i> Reviewed
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Section -->
+                <div class="bg-light rounded-3 p-3" *ngIf="trip.rating">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="text-dark fw-medium">Your Rating:</span>
+                        <div class="text-warning">
+                            <i class="bi bi-star-fill" *ngFor="let star of [1,2,3,4,5]"
+                                [ngClass]="{'text-warning': star <= (trip.rating || 0), 'text-muted opacity-25': star > (trip.rating || 0)}"></i>
+                        </div>
+                    </div>
+                    <p class="text-muted mb-0 fst-italic">"{{ trip.review }}"</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rating Modal Component -->
+<app-rating-modal *ngIf="showRatingModal" [tourId]="selectedTourIdToRate!" [touristId]="touristId"
+    (close)="closeRatingModal()" (submitted)="onRatingSubmitted()">
+</app-rating-modal>

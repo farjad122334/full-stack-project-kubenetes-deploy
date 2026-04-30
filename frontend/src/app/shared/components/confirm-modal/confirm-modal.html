@@ -1,0 +1,31 @@
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+
+            <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-exclamation-circle text-{{ confirmVariant }} me-2"></i>
+                    {{ title }}
+                </h5>
+                <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body px-4 py-3">
+                <p class="text-muted mb-0 fs-6">{{ message }}</p>
+            </div>
+
+            <div class="modal-footer border-top-0 px-4 pb-4 pt-1">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-medium text-dark" (click)="onCancel()">
+                    {{ cancelText }}
+                </button>
+                <button type="button"
+                    class="btn btn-{{ confirmVariant }} rounded-pill px-4 fw-medium text-white shadow-sm"
+                    (click)="onConfirm()">
+                    {{ confirmText }}
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

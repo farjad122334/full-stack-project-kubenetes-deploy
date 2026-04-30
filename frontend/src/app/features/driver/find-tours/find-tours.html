@@ -1,0 +1,119 @@
+<div class="container-fluid py-4 px-5">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <h4 class="mb-1 text-dark fw-bold">🚗 Available Tours</h4>
+        <p class="text-muted">Browse tours and submit transport offers</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Tours Grid -->
+    <div *ngIf="!isLoading" class="row g-4">
+
+        <!-- No Tours -->
+        <div *ngIf="filteredTours.length === 0" class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                No tours available for offers at the moment.
+            </div>
+        </div>
+
+        <!-- Tour Cards -->
+        <div *ngFor="let tour of filteredTours" class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="fw-bold mb-0">{{ tour.title }}</h5>
+                        <span class="badge bg-primary">{{ tour.status }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="mb-2 text-muted small">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <strong>From:</strong> {{ tour.departureLocation }}
+                            <strong>To:</strong> {{ tour.destination }}
+                        </p>
+                        <p class="mb-2 text-muted small">
+                            <i class="bi bi-calendar me-1"></i>
+                            {{ formatDate(tour.startDate) }} - {{ formatDate(tour.endDate) }}
+                        </p>
+                        <p class="mb-2 text-muted small">
+                            <i class="bi bi-people me-1"></i>
+                            {{ tour.maxCapacity }} participants
+                        </p>
+                    </div>
+
+                    <div class="mb-3" *ngIf="tour.description">
+                        <p class="small text-muted mb-0">{{ tour.description.substring(0, 100) }}...</p>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <span class="fw-bold text-primary">PKR {{ tour.pricePerHead }}/head</span>
+                        <button class="btn btn-sm btn-primary" (click)="openOfferModal(tour)">
+                            <i class="bi bi-truck me-1"></i> Make Offer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offer Modal -->
+    <div class="modal fade show d-block" *ngIf="showOfferModal" tabindex="-1"
+        style="background: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 11000;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-bold">Submit Transport Offer</h5>
+                    <button type="button" class="btn-close" (click)="closeOfferModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3" *ngIf="selectedTour">
+                        <label class="small text-muted">Tour</label>
+                        <p class="fw-bold mb-0">{{ selectedTour.title }}</p>
+                        <small class="text-muted">
+                            {{ formatDate(selectedTour.startDate) }} • {{ selectedTour.maxCapacity }} people
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Select Vehicle <span
+                                class="text-danger">*</span></label>
+                        <select class="form-select border-0 bg-light" [(ngModel)]="selectedVehicleId" required>
+                            <option [ngValue]="null" disabled>Choose vehicle...</option>
+                            <option *ngFor="let vehicle of driverVehicles" [ngValue]="vehicle.vehicleId">
+                                {{ vehicle.model }} (Capacity: {{ vehicle.capacity }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Quoted Price (PKR) <span
+                                class="text-danger">*</span></label>
+                        <input type="number" class="form-control border-0 bg-light" [(ngModel)]="quotedPrice"
+                            placeholder="e.g., 50000" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">Additional Notes (Optional)</label>
+                        <textarea class="form-control border-0 bg-light" rows="3" [(ngModel)]="additionalNotes"
+                            placeholder="Any special conditions or additional services..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" (click)="closeOfferModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" (click)="submitOffer()">
+                        <i class="bi bi-send me-1"></i> Submit Offer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

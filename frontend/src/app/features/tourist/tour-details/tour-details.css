@@ -1,0 +1,4 @@
+/* Basic styles for tour details if additional custom styling is needed */
+.object-fit-cover {
+    object-fit: cover;
+}

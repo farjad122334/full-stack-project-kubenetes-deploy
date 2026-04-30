@@ -1,0 +1,36 @@
+.tour-card {
+    border: 2px solid transparent;
+}
+
+.tour-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.active-link {
+    font-weight: 600;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bg-teal {
+    background-color: #008080 !important;
+}
+
+.btn-teal:hover {
+    background-color: #006666 !important;
+}

@@ -1,0 +1,78 @@
+<div class="container-fluid py-4 bg-light min-vh-100">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark">Tour Requests</h2>
+            <p class="text-muted">Manage and track your tour participation requests</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Fetching your requests...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error" class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !error && requests.length === 0" class="text-center py-5">
+        <div class="bg-white p-5 rounded-4 shadow-sm d-inline-block">
+            <div class="mb-3">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+            </div>
+            <h5>No requests found</h5>
+            <p class="text-muted mb-4">You haven't submitted any offers for tours yet.</p>
+            <a routerLink="/driver/find-trips" class="btn btn-primary rounded-pill px-4">Find Tours</a>
+        </div>
+    </div>
+
+    <!-- Requests List -->
+    <div class="row" *ngIf="!loading && !error && requests.length > 0">
+        <div class="col-12">
+            <div *ngFor="let request of requests" class="card border-0 shadow-sm rounded-4 mb-3 overflow-hidden">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2 flex-wrap gap-2">
+                                <h5 class="fw-bold mb-0 me-2 text-dark">{{request.title}}</h5>
+                                <span class="badge rounded-pill border py-1 px-3 fw-medium"
+                                    [ngClass]="request.statusClass">
+                                    {{request.status}}
+                                </span>
+                            </div>
+                            <div class="row text-muted small mb-3">
+                                <div class="col-md-5 d-flex align-items-center mb-1">
+                                    <i class="bi bi-geo-alt me-2 text-primary"></i> {{request.route}}
+                                </div>
+                                <div class="col-md-4 d-flex align-items-center mb-1">
+                                    <i class="bi bi-calendar3 me-2 text-primary"></i> {{request.date}}
+                                </div>
+                                <div class="col-md-3 d-flex align-items-center mb-1">
+                                    <i class="bi bi-clock me-2 text-primary"></i> {{request.duration}}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center text-muted small p-2 bg-light rounded-3">
+                                <i class="bi bi-info-circle me-2 text-info"></i>
+                                <span>{{request.adminStatus}} • Applied on {{request.appliedDate}}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0 pt-3 pt-md-0 border-md-start">
+                            <div class="mb-2">
+                                <p class="text-muted small mb-0">Quoted Price</p>
+                                <h4 class="fw-bold text-dark mb-0">PKR {{request.price | number}}</h4>
+                            </div>
+                            <div class="d-flex gap-2 justify-content-md-end mt-3">
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-4">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

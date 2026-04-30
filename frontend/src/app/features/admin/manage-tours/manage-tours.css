@@ -1,0 +1,45 @@
+/* Custom Colors */
+.btn-teal {
+    background-color: #00bfa5;
+    border-color: #00bfa5;
+}
+
+.btn-teal:hover {
+    background-color: #008f7a;
+    border-color: #008f7a;
+}
+
+.bg-teal {
+    background-color: #00bfa5 !important;
+}
+
+.text-teal {
+    color: #00bfa5 !important;
+}
+
+.bg-orange {
+    background-color: #fd7e14 !important;
+}
+
+.text-orange {
+    color: #fd7e14 !important;
+}
+
+.bg-success-subtle {
+    background-color: #d1e7dd !important;
+}
+
+/* Card Styling */
+.card {
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}

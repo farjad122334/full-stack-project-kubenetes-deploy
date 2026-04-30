@@ -1,0 +1,186 @@
+<div class="manage-drivers-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="title-section">
+            <h1>Manage Drivers</h1>
+            <p>Review and verify driver registrations</p>
+        </div>
+
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-card">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search by name, CNIC, or license..." [(ngModel)]="searchTerm">
+        </div>
+
+        <div class="filter-tabs">
+            <button [class.active]="activeTab === 'all'" (click)="setActiveTab('all')">All Drivers</button>
+            <button [class.active]="activeTab === 'verified'" (click)="setActiveTab('verified')">Verified</button>
+            <button [class.active]="activeTab === 'pending'" (click)="setActiveTab('pending')">Pending</button>
+        </div>
+    </div>
+
+    <!-- Driver List -->
+    <div class="list-card">
+        <h3>Driver List</h3>
+
+        <div class="table-responsive">
+            <table class="drivers-table">
+                <thead>
+                    <tr>
+                        <th>Driver</th>
+                        <th>Contact</th>
+                        <th>CNIC</th>
+                        <th>License</th>
+                        <th>Vehicle</th>
+                        <th>Documents</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let driver of filteredDrivers">
+                        <!-- Driver Info -->
+                        <td class="driver-info">
+                            <img [src]="driver.avatar" [alt]="driver.name">
+                            <div>
+                                <a [routerLink]="['/admin/driver-details', driver.realId]" class="name-link">
+                                    <span class="name">{{ driver.name }}</span>
+                                </a>
+                                <span class="id">{{ driver.id }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Contact -->
+                        <td>
+                            <div class="contact-info">
+                                <span>{{ driver.contact }}</span>
+                            </div>
+                        </td>
+
+                        <!-- CNIC -->
+                        <td class="code-text">{{ driver.cnic }}</td>
+
+                        <!-- License -->
+                        <td class="code-text">{{ driver.license }}</td>
+
+                        <!-- Vehicle -->
+                        <td>
+                            <div class="vehicle-info">
+                                <span>{{ driver.vehicle }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Documents -->
+                        <td>
+                            <button class="btn-icon view-docs-btn" (click)="viewDocuments(driver)"
+                                title="View Documents">
+                                <i class="bi bi-file-earmark-text"></i> View
+                            </button>
+                        </td>
+
+                        <!-- Rating -->
+                        <td>
+                            <div class="rating" *ngIf="driver.rating">
+                                <span class="score">{{ driver.rating }}</span>
+                                <span class="count">({{ driver.totalTrips }})</span>
+                            </div>
+                            <span class="new-badge" *ngIf="!driver.rating">New</span>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <span class="status-badge" [ngClass]="driver.status.toLowerCase()">
+                                {{ driver.status }}
+                            </span>
+                        </td>
+
+                        <!-- Actions/Status -->
+                        <td class="actions-cell">
+                            <ng-container *ngIf="driver.status === 'Pending' || driver.status === 'New'">
+                                <button class="btn-success" (click)="approveDriver(driver)">
+                                    <i class="bi bi-check-lg"></i> Approve
+                                </button>
+                                <button class="btn-danger" (click)="rejectDriver(driver)">
+                                    <i class="bi bi-x-lg"></i> Reject
+                                </button>
+                            </ng-container>
+                            <ng-container *ngIf="driver.status === 'Verified'">
+                                <span class="action-text success">Active</span>
+                            </ng-container>
+                            <ng-container *ngIf="driver.status === 'Rejected'">
+                                <span class="action-text danger">Rejected</span>
+                            </ng-container>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State: No Drivers in System -->
+        <div class="empty-state" *ngIf="drivers.length === 0">
+            <p>No drivers registered yet.</p>
+        </div>
+
+        <!-- Empty State: No Search Results -->
+        <div class="empty-state" *ngIf="drivers.length > 0 && filteredDrivers.length === 0">
+            <p>No drivers found matching your criteria.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Documents Modal -->
+<div class="modal-backdrop" *ngIf="showDocumentModal" (click)="closeDocumentModal()">
+    <div class="modal-container docs-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Driver Documents</h3>
+            <button class="close-btn" (click)="closeDocumentModal()"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body docs-body" *ngIf="selectedDriver">
+            <div class="doc-item">
+                <label>CNIC Front</label>
+                <div class="img-wrapper">
+                    <img [src]="selectedDriver.documents.cnicFront" alt="CNIC Front">
+                </div>
+            </div>
+            <div class="doc-item">
+                <label>CNIC Back</label>
+                <div class="img-wrapper">
+                    <img [src]="selectedDriver.documents.cnicBack" alt="CNIC Back">
+                </div>
+            </div>
+            <div class="doc-item">
+                <label>License</label>
+                <div class="img-wrapper">
+                    <img [src]="selectedDriver.documents.license" alt="License">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="showConfirmModal" (click)="closeModal()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <div class="modal-header" [ngClass]="confirmType">
+            <i class="bi bi-check-circle-fill" *ngIf="confirmType === 'approve'"></i>
+            <i class="bi bi-exclamation-circle-fill" *ngIf="confirmType === 'reject'"></i>
+            <h3>{{ confirmType === 'approve' ? 'Approve Driver' : 'Reject Driver' }}</h3>
+        </div>
+
+        <div class="modal-body">
+            <p>{{ confirmMessage }}</p>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+            <button [class]="confirmType === 'approve' ? 'btn-confirm-approve' : 'btn-confirm-reject'"
+                (click)="onConfirm()">
+                {{ confirmType === 'approve' ? 'Yes, Approve' : 'Yes, Reject' }}
+            </button>
+        </div>
+    </div>
+</div>

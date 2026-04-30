@@ -1,0 +1,25 @@
+/* Add any necessary custom styles here.
+   Most styling is handled by Bootstrap utility classes. */
+.hover-bg-light:hover {
+    background-color: var(--bs-light);
+}
+
+.profile-img-container .upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-img-container:hover .upload-overlay {
+    opacity: 1;
+}

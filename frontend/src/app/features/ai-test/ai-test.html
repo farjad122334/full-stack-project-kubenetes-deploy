@@ -1,0 +1,51 @@
+<div class="ai-test-container">
+  <div class="test-card">
+    <header>
+      <h1>Gemini Document AI</h1>
+      <p>CNIC Front Verification Test Bench</p>
+    </header>
+
+    <div class="upload-section">
+      <div class="drop-zone" [class.has-image]="imagePreview" (click)="fileInput.click()">
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
+        
+        <div class="placeholder" *ngIf="!imagePreview">
+          <i class="upload-icon"></i>
+          <span>Click to upload CNIC Front Image</span>
+          <p>JPG, PNG or WebP</p>
+        </div>
+
+        <img [src]="imagePreview" *ngIf="imagePreview" alt="CNIC Preview" class="preview-img">
+      </div>
+
+      <button class="verify-btn" (click)="verifyDocument()" [disabled]="isLoading || !selectedFile">
+        <span *ngIf="!isLoading">Verify with Gemini</span>
+        <div class="spinner" *ngIf="isLoading"></div>
+      </button>
+
+      <div class="error-msg" *ngIf="error">
+        {{ error }}
+      </div>
+    </div>
+
+    <div class="result-section" *ngIf="verificationResult || isLoading">
+      <div class="result-header">
+        <h2>Extraction Results</h2>
+        <span class="status-badge" [class.loading]="isLoading">
+          {{ isLoading ? 'Analyzing...' : 'Success' }}
+        </span>
+      </div>
+
+      <div class="result-grid" *ngIf="verificationResult">
+        <div class="result-item" *ngFor="let item of verificationResult | keyvalue">
+          <label>{{ $any(item.key) | titlecase }}</label>
+          <p>{{ item.value }}</p>
+        </div>
+      </div>
+
+      <div class="skeleton-loader" *ngIf="isLoading">
+        <div class="skeleton-item" *ngFor="let i of [1,2,3,4,5,6]"></div>
+      </div>
+    </div>
+  </div>
+</div>

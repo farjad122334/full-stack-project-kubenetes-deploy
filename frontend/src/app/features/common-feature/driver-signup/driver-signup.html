@@ -1,0 +1,285 @@
+<div class="driver-signup-container">
+    <div class="signup-content">
+        <!-- Back Button -->
+        <button class="back-button" (click)="goBack()">
+            <i class="bi bi-arrow-left"></i> Back
+        </button>
+
+        <!-- Header Icon -->
+        <div class="header-icon">
+            <div class="icon-circle">
+                <i class="bi bi-car-front"></i>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <div class="text-center mb-4">
+            <h1 class="page-title">Driver Registration</h1>
+            <p class="page-subtitle">Join our network of professional drivers</p>
+        </div>
+
+        <!-- Stepper -->
+        <div class="stepper-wrapper">
+            <div class="stepper-item" *ngFor="let step of steps" [class.active]="step.number === currentStep"
+                [class.completed]="step.number < currentStep">
+                <div class="step-circle">{{step.number}}</div>
+                <div class="step-name">{{step.name}}</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Personal Information -->
+        <div class="step-content" *ngIf="currentStep === 1">
+            <h2 class="section-title">Personal Information</h2>
+
+            <form>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-person"></i>
+                        <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Enter your full name"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-envelope"></i>
+                        <input type="email" [(ngModel)]="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-telephone"></i>
+                        <input type="tel" [(ngModel)]="phoneNumber" name="phoneNumber" placeholder="Enter phone number"
+                            required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-lock"></i>
+                        <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password"
+                            placeholder="Create password" required>
+                        <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"
+                            (click)="togglePasswordVisibility()" style="cursor: pointer; right: 1rem; left: auto;"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-lock"></i>
+                        <input [type]="showConfirmPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword"
+                            name="confirmPassword" placeholder="Confirm password" required>
+                        <i class="bi" [class.bi-eye]="!showConfirmPassword" [class.bi-eye-slash]="showConfirmPassword"
+                            (click)="toggleConfirmPasswordVisibility()"
+                            style="cursor: pointer; right: 1rem; left: auto;"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Profile Photo</label>
+                    <div class="upload-box" (click)="fileInput.click()">
+                        <input #fileInput type="file" (change)="onProfilePicSelected($event)" hidden accept="image/*">
+                        <div class="upload-content">
+                            <i class="bi bi-camera"></i>
+                            <span *ngIf="!profilePicture">Upload your photo</span>
+                            <span *ngIf="profilePicture" class="file-name">{{profilePicture.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-continue" (click)="nextStep()">
+                    Continue <i class="bi bi-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Step 2: Verification (OTP) -->
+        <div class="step-content" *ngIf="currentStep === 2">
+            <div class="otp-step-container">
+                <div class="text-center mb-4">
+                    <h2 class="section-title">Verify Your Email</h2>
+                    <p class="text-gray-600">We've sent a 6-digit code to <strong>{{email}}</strong></p>
+                </div>
+
+                <div class="form-group" style="max-width: 300px; margin: 0 auto 1.5rem;">
+                    <label style="text-align: left; display: block; margin-bottom: 0.5rem; color: #374151;">OTP
+                        Code</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-key-fill"></i>
+                        <input type="text" [(ngModel)]="otpCode" name="otpCode" placeholder="Enter 6-digit code"
+                            maxlength="6" required style="text-align: center; letter-spacing: 2px; font-weight: 600;">
+                    </div>
+                </div>
+
+                <div class="text-center" style="margin-top: 1rem;">
+                    <span *ngIf="timeLeft > 0" class="text-muted">
+                        Resend Code in {{ timeLeft }}s
+                    </span>
+                    <span *ngIf="timeLeft === 0">
+                        <a class="resend-link" (click)="resendOtp(email)" [class.disabled]="isResending"
+                            [style.pointer-events]="isResending ? 'none' : 'auto'"
+                            [style.cursor]="isResending ? 'default' : 'pointer'"
+                            [style.opacity]="isResending ? '0.5' : '1'">
+                            {{ isResending ? 'Resending...' : 'Resend Code' }}
+                        </a>
+                    </span>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn-back" (click)="prevStep()">Back</button>
+                    <button type="button" class="btn-next" (click)="nextStep()">Verify & Continue <i
+                            class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Documents -->
+        <div class="step-content" *ngIf="currentStep === 3">
+            <h2 class="docs-title">Driver Documents</h2>
+
+            <form>
+                <div class="form-group">
+                    <label class="doc-label">License Number</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-file-text"></i>
+                        <input type="text" [(ngModel)]="licenseNumber" name="licenseNumber"
+                            placeholder="Enter license number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="doc-label">License Expiry Date</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-calendar"></i>
+                        <input type="date" [(ngModel)]="licenseExpiryDate" name="licenseExpiryDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="doc-label">CNIC Number</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-card-heading"></i>
+                        <input type="text" [(ngModel)]="cnic" name="cnic" placeholder="Enter CNIC number" required>
+                    </div>
+                </div>
+
+                <div class="doc-upload-container">
+                    <label class="doc-label">Upload License Image</label>
+                    <div class="dashed-upload" (click)="licenseInput.click()">
+                        <input #licenseInput type="file" (change)="onFileSelected($event, 'license')" hidden
+                            accept="image/*">
+                        <div class="upload-placeholder">
+                            <i class="bi bi-upload"></i>
+                            <span *ngIf="!licenseFile">Upload License</span>
+                            <span *ngIf="licenseFile" class="file-name">{{licenseFile.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-upload-container">
+                    <label class="doc-label">Upload CNIC Front Image</label>
+                    <div class="dashed-upload" (click)="cnicFrontInput.click()">
+                        <input #cnicFrontInput type="file" (change)="onFileSelected($event, 'cnicFront')" hidden
+                            accept="image/*">
+                        <div class="upload-placeholder">
+                            <i class="bi bi-upload"></i>
+                            <span *ngIf="!cnicFrontFile">Upload CNIC Front</span>
+                            <span *ngIf="cnicFrontFile" class="file-name">{{cnicFrontFile.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-upload-container">
+                    <label class="doc-label">Upload CNIC Back Image</label>
+                    <div class="dashed-upload" (click)="cnicBackInput.click()">
+                        <input #cnicBackInput type="file" (change)="onFileSelected($event, 'cnicBack')" hidden
+                            accept="image/*">
+                        <div class="upload-placeholder">
+                            <i class="bi bi-upload"></i>
+                            <span *ngIf="!cnicBackFile">Upload CNIC Back</span>
+                            <span *ngIf="cnicBackFile" class="file-name">{{cnicBackFile.name}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back" (click)="prevStep()" [disabled]="isVerifyingAI">Back</button>
+                    <button type="button" class="btn-next" (click)="nextStep()" [disabled]="isVerifyingAI">
+                        <span *ngIf="!isVerifyingAI">Continue <i class="bi bi-arrow-right"></i></span>
+                        <span *ngIf="isVerifyingAI">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Verifying...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 4: Vehicle Info -->
+        <div class="step-content" *ngIf="currentStep === 4">
+            <h2 class="section-title">Add Vehicle</h2>
+
+            <form (ngSubmit)="submitApplication()">
+                <div class="form-group">
+                    <label>Vehicle Registration Number</label>
+                    <div class="input-with-icon">
+                        <i class="bi bi-truck"></i>
+                        <input type="text" [(ngModel)]="vehicleRegNumber" name="vehicleRegNumber"
+                            placeholder="Enter registration number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle Type</label>
+                    <div class="input-with-icon">
+                        <!-- Using select but keeping container style -->
+                        <select class="form-control-select" [(ngModel)]="vehicleType" name="vehicleType" required>
+                            <option value="" disabled selected>Select vehicle type</option>
+                            <option *ngFor="let type of vehicleTypes" [value]="type">{{type}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Model</label>
+                    <input type="text" class="form-control-simple" [(ngModel)]="vehicleModel" name="vehicleModel"
+                        placeholder="e.g., Toyota Corolla 2020" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Capacity</label>
+                    <input type="number" class="form-control-simple" [(ngModel)]="vehicleCapacity"
+                        name="vehicleCapacity" placeholder="Number of passengers" required>
+                </div>
+
+                <!-- Vehicle Photos -->
+                <div class="form-group mt-4">
+                    <label class="d-block mb-2 fw-bold text-dark">Vehicle Photos</label>
+                    <app-image-uploader (imagesSelected)="onVehicleImagesSelected($event)" [multiple]="true">
+                    </app-image-uploader>
+                    <p class="small text-muted mt-1">Upload clear photos of your vehicle (Front, Side, Interior)</p>
+                </div>
+
+                <!-- Note Section -->
+                <div class="note-box">
+                    <p><strong>Note:</strong> Your account will be reviewed by our admin team. You'll receive an email
+                        once
+                        your account is approved.</p>
+                </div>
+
+                <div class="nav-buttons">
+                    <button type="button" class="btn-back" (click)="prevStep()">Back</button>
+                    <button type="submit" class="submit-btn"
+                        style="width: 100%; border-radius: 8px; margin-top: 0; background-color: #00b050; color: white; padding: 0.875rem; font-weight: 600; border: none;">Submit
+                        Application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

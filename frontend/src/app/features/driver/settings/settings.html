@@ -1,0 +1,247 @@
+<div class="container-fluid mb-5">
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark mb-1">Settings</h2>
+        <p class="text-muted">Manage your account settings and preferences</p>
+    </div>
+
+    <!-- Payout Settings -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-1 d-flex align-items-center">
+                <i class="bi bi-bank me-2 text-secondary"></i> Payout Settings
+            </h5>
+            <p class="text-muted small mb-4">Connect your bank account to receive tour earnings via Stripe.</p>
+
+            <div *ngIf="!isStripeConnected"
+                class="d-flex align-items-center gap-3 p-3 bg-warning-subtle rounded-3 border border-warning-subtle mb-3">
+                <i class="bi bi-exclamation-triangle-fill text-warning fs-4"></i>
+                <div>
+                    <h6 class="mb-0 fw-bold">Bank Account Not Connected</h6>
+                    <p class="text-muted small mb-2">You won't receive payouts until you connect a bank account.</p>
+                    <button class="btn btn-sm btn-outline-warning" (click)="verifyStripeStatus()" [disabled]="isVerifying">
+                        <span *ngIf="isVerifying" class="spinner-border spinner-border-sm me-1"></span>
+                        <i *ngIf="!isVerifying" class="bi bi-arrow-clockwise me-1"></i>
+                        Refresh Status
+                    </button>
+                </div>
+            </div>
+
+            <div *ngIf="isStripeConnected"
+                class="d-flex align-items-center gap-3 p-3 bg-success-subtle rounded-3 border border-success-subtle mb-3">
+                <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                <div>
+                    <h6 class="mb-0 fw-bold">Bank Account Connected</h6>
+                    <small class="text-muted">Your Stripe account is set up. You'll receive automatic payouts on tour
+                        completion.</small>
+                </div>
+            </div>
+
+            <button class="btn btn-primary px-4 rounded-pill" (click)="connectStripe()" [disabled]="isConnecting">
+                <span *ngIf="isConnecting" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isConnecting" class="bi bi-stripe me-2"></i>
+                {{ isStripeConnected ? 'Update Bank Account' : 'Connect Bank Account' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Change Password -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-4 d-flex align-items-center">
+                <i class="bi bi-lock me-2 text-secondary"></i> Change Password
+            </h5>
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <label class="form-label fw-bold small">Current Password</label>
+                    <input type="password" class="form-control bg-light border-0" placeholder="Enter current password">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold small">New Password</label>
+                    <input type="password" class="form-control bg-light border-0" placeholder="Enter new password">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold small">Confirm New Password</label>
+                    <input type="password" class="form-control bg-light border-0" placeholder="Confirm new password">
+                </div>
+                <div class="col-12 mt-3">
+                    <button class="btn btn-primary px-4">Update Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Preferences -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-4 d-flex align-items-center">
+                <i class="bi bi-bell me-2 text-secondary"></i> Notification Preferences
+            </h5>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Email Notifications</h6>
+                    <small class="text-muted">Receive notifications via email</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Push Notifications</h6>
+                    <small class="text-muted">Receive push notifications on your device</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Booking Updates</h6>
+                    <small class="text-muted">Get notified about booking acceptances and rejections</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Payment Notifications</h6>
+                    <small class="text-muted">Receive alerts when payments are processed</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Tour Reminders</h6>
+                    <small class="text-muted">Get reminded about upcoming tours</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Rating & Review Alerts</h6>
+                    <small class="text-muted">Get notified when customers rate your service</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Promotional Offers</h6>
+                    <small class="text-muted">Receive updates about special offers and promotions</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Language & Region -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-4 d-flex align-items-center">
+                <i class="bi bi-globe me-2 text-secondary"></i> Language & Region
+            </h5>
+            <div class="row g-4">
+                <div class="col-12">
+                    <label class="form-label fw-bold small">Preferred Language</label>
+                    <select class="form-select bg-light border-0">
+                        <option selected>English</option>
+                        <option>Urdu</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-bold small">Time Zone</label>
+                    <select class="form-select bg-light border-0">
+                        <option selected>Pakistan Standard Time (PKT)</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-bold small">Currency</label>
+                    <select class="form-select bg-light border-0">
+                        <option selected>PKR - Pakistani Rupee</option>
+                    </select>
+                </div>
+                <div class="col-12 mt-3">
+                    <button class="btn btn-primary px-4">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy & Security -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-4 d-flex align-items-center">
+                <i class="bi bi-shield-check me-2 text-secondary"></i> Privacy & Security
+            </h5>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Two-Factor Authentication</h6>
+                    <small class="text-muted">Add an extra layer of security to your account</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Profile Visibility</h6>
+                    <small class="text-muted">Make your profile visible to customers</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Location Tracking</h6>
+                    <small class="text-muted">Allow location tracking during active tours</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded">
+                <div>
+                    <h6 class="mb-0 fw-bold">Data Sharing</h6>
+                    <small class="text-muted">Share performance data for service improvement</small>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input fs-4" type="checkbox" checked>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Actions -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-4">Account Actions</h5>
+            <div class="d-flex flex-column gap-3">
+                <button class="btn btn-outline-primary text-start">Download My Data</button>
+                <button class="btn btn-outline-secondary text-start">Deactivate Account</button>
+                <button class="btn btn-outline-danger text-start">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+</div>

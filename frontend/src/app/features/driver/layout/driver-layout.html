@@ -1,0 +1,173 @@
+<div class="d-flex" style="height: 100vh; overflow: hidden;">
+
+  <!-- Mobile Header -->
+  <div
+    class="d-flex d-md-none align-items-center justify-content-between p-3 bg-white shadow-sm position-fixed top-0 w-100"
+    style="z-index: 1060; height: 60px;">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-airplane-engines-fill fs-4 me-2 text-info"></i>
+      <span class="fs-5 fw-bold tracking-tight text-dark">SAFARNAMA</span>
+    </div>
+    <button class="btn btn-light border-0" (click)="toggleSidebar()">
+      <i class="bi bi-list fs-2"></i>
+    </button>
+  </div>
+
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay d-md-none" [class.show]="isSidebarOpen" (click)="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-dark shadow-sm" [class.show]="isSidebarOpen"
+    style="width: 260px; background: #ffffff; z-index: 1070; overflow-y: auto; border-right: 1px solid #e2e8f0;">
+    <div class="d-flex justify-content-between align-items-center mb-3 mb-md-0 px-2">
+      <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+        <i class="bi bi-airplane-engines-fill fs-3 me-2 text-primary"></i>
+        <span class="fs-4 fw-bold tracking-tight">SAFARNAMA</span>
+      </a>
+      <button class="btn btn-link text-dark d-md-none p-0" (click)="toggleSidebar()">
+        <i class="bi bi-x fs-2"></i>
+      </button>
+    </div>
+
+    <div class="px-2 mt-3 mb-3">
+      <div class="text-muted small mb-1">Welcome back, {{ user?.name?.split(' ')[0] || 'Driver' }}</div>
+      <div class="dropdown">
+        <div class="d-flex align-items-center cursor-pointer" id="sidebarProfileDropdown" data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <div class="bg-info rounded-circle d-flex align-items-center justify-content-center text-dark fw-bold me-2"
+            style="width: 32px; height: 32px;">
+            <ng-container *ngIf="getProfilePictureUrl(user?.profilePicture) as profileUrl; else sidebarInitials">
+              <img [src]="profileUrl" alt="Profile" class="rounded-circle"
+                style="width: 32px; height: 32px; object-fit: cover;">
+            </ng-container>
+            <ng-template #sidebarInitials>
+              <i class="bi bi-person-fill text-white"></i>
+            </ng-template>
+          </div>
+          <div class="fw-bold fs-6 me-2 text-dark">{{ user?.name || 'Driver' }}</div>
+          <i class="bi bi-chevron-down small text-muted"></i>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary mt-2"
+          aria-labelledby="sidebarProfileDropdown">
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/driver/profile">
+              <i class="bi bi-person text-info"></i> My Profile
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2" routerLink="/driver/settings">
+              <i class="bi bi-gear text-secondary"></i> Settings
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider border-secondary opacity-50">
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="/login" (click)="logout()">
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="border-dark opacity-10 my-2">
+
+    <ul class="nav nav-pills flex-column mb-auto">
+      <li class="nav-item">
+        <h6 class="text-uppercase text-muted mt-3 mb-2 px-2 small fw-bold">Menu</h6>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/dashboard" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" [routerLinkActiveOptions]="{exact: true}"
+          (click)="toggleSidebar()">
+          <i class="bi bi-grid-fill me-3 fs-5"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/find-trips" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-search me-3 fs-5"></i> Find Trips
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/requests" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-file-earmark-text me-3 fs-5"></i> Tour Requests
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a routerLink="/driver/booked-tours" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-check-circle me-3 fs-5"></i> Booked Tours
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/trip-history" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-clock-history me-3 fs-5"></i> Trip History
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/earnings" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-currency-dollar me-3 fs-5"></i> Earnings
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/vehicles" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-car-front-fill me-3 fs-5"></i> My Vehicles
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/ratings" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-star me-3 fs-5"></i> Ratings & Reviews
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/performance-insights" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-graph-up me-3 fs-5"></i> Performance Insights (AI)
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/notifications"
+          class="nav-link text-secondary my-1 d-flex align-items-center justify-content-between"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-bell me-3 fs-5"></i> Notifications
+          </div>
+          <span class="badge bg-danger rounded-pill" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/profile" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-person me-3 fs-5"></i> My Profile
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/driver/settings" class="nav-link text-secondary my-1 d-flex align-items-center"
+          routerLinkActive="active-link text-primary bg-light" (click)="toggleSidebar()">
+          <i class="bi bi-gear me-3 fs-5"></i> Settings
+        </a>
+      </li>
+    </ul>
+
+
+  </div>
+
+  <!-- Main Content -->
+  <div class="content-wrapper d-flex flex-column flex-fill bg-light mobile-content-padding" style="overflow-y: auto;">
+
+    <!-- Router Outlet Container -->
+    <div class="flex-grow-1" style="padding: 30px;">
+      <router-outlet></router-outlet>
+    </div>
+
+  </div>
+
+</div>

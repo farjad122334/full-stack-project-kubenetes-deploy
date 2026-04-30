@@ -1,0 +1,42 @@
+<div class="verify-otp-container">
+    <div class="signup-card">
+        <div class="header-section">
+            <div class="user-icon-circle">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h1 class="page-title">Verify Your Account</h1>
+            <p class="page-subtitle">Enter the OTP sent to {{ email }}</p>
+        </div>
+
+        <form (ngSubmit)="verifyOtp()">
+            <div class="form-group">
+                <label class="form-label">OTP Code</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-key input-icon"></i>
+                    <input type="text" class="form-input" placeholder="Enter 6-digit code" [(ngModel)]="otpCode"
+                        name="otpCode" required maxlength="6">
+                </div>
+            </div>
+
+            <button type="submit" class="create-account-btn" [disabled]="isLoading">
+                {{ isLoading ? 'Verifying...' : 'Verify OTP' }}
+            </button>
+
+            <div class="info-message" style="margin-top: 1rem; text-align: center;">
+                <span *ngIf="timeLeft > 0" class="text-muted">
+                    Resend OTP in {{ timeLeft }}s
+                </span>
+                <span *ngIf="timeLeft === 0">
+                    Didn't receive code? 
+                    <a href="#" (click)="$event.preventDefault(); resendOtp()" 
+                       [class.disabled]="isResending"
+                       [style.pointer-events]="isResending ? 'none' : 'auto'"
+                       [style.text-decoration]="isResending ? 'none' : 'underline'"
+                       [style.color]="isResending ? '#6c757d' : ''">
+                       {{ isResending ? 'Resending...' : 'Resend' }}
+                    </a>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>

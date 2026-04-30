@@ -1,0 +1,163 @@
+<div class="container py-5 mt-4" *ngIf="tour; else loadingOrError">
+
+    <!-- Back Button -->
+    <a routerLink="/tourist/dashboard" class="text-decoration-none text-muted mb-4 d-inline-block">
+        <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
+    </a>
+
+    <!-- Header Section -->
+    <div class="row align-items-center mb-4">
+        <div class="col-lg-8">
+            <h1 class="display-5 fw-bold text-dark mb-2">{{ tour.name }}</h1>
+            <p class="lead text-muted"><i class="bi bi-geo-alt-fill text-primary me-2"></i> {{ tour.destination }}</p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+            <h2 class="text-primary fw-bold mb-0">Rs. {{ tour.price | number }}</h2>
+            <small class="text-muted">Per Head</small>
+            <div *ngIf="tour.couplePrice" class="mt-1">
+                <span class="badge bg-info text-dark">Couple Price: Rs. {{ tour.couplePrice | number }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+
+        <!-- Left Column: Details -->
+        <div class="col-lg-8">
+
+            <!-- Image -->
+            <div class="card border-0 shadow-sm overflow-hidden mb-4 rounded-4">
+                <img [src]="tour.imageUrl" class="img-fluid w-100 object-fit-cover" style="height: 400px;"
+                    alt="{{ tour.name }}">
+            </div>
+
+            <!-- Description -->
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3">About this Tour</h4>
+                <p class="text-muted lh-lg">{{ tour.description }}</p>
+            </div>
+
+            <!-- Itinerary / Highlights (if applicable) -->
+            <div *ngIf="tour.type === 'Multi' && tour.destinations" class="mb-5">
+                <h4 class="fw-bold mb-3">Destinations Covered</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    <span *ngFor="let dest of tour.destinations"
+                        class="badge bg-light text-dark border px-3 py-2 rounded-pill fs-6">
+                        {{ dest }}
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Booking Card -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-lg rounded-4 sticky-top" style="top: 100px; z-index: 10;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Tour Details</h5>
+
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span class="text-muted">Duration</span>
+                        <span class="fw-bold"><i class="bi bi-clock me-2"></i> {{ tour.duration }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span class="text-muted">Start Date</span>
+                        <span class="fw-bold" *ngIf="tour.startDate">{{ tour.startDate }}</span>
+                        <span class="fw-bold text-muted" *ngIf="!tour.startDate">TBA</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span class="text-muted">Departure From</span>
+                        <span class="fw-bold">{{ tour.location }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <span class="text-muted">Vehicles</span>
+                        <span class="fw-bold">{{ tour.vehicles }} Vehicles</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Seats Availability</span>
+                            <span class="fw-bold"
+                                [ngClass]="{'text-success': seatsRemaining > 5, 'text-danger': seatsRemaining <= 5}">
+                                {{ seatsRemaining }} / {{ tour.totalSeats }}
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar"
+                                [style.width.%]="(tour.seatsBooked / tour.totalSeats) * 100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booking Controls -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">Booking Type</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+                                [(ngModel)]="selectedBookingType" value="Individual" (change)="updatePrice()">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio1">Individual</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                                [(ngModel)]="selectedBookingType" value="Couple" (change)="updatePrice()">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio2">Couple</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                                [(ngModel)]="selectedBookingType" value="Bulk" (change)="updatePrice()">
+                            <label class="btn btn-outline-primary btn-sm" for="btnradio3">Bulk</label>
+                        </div>
+                        <small *ngIf="selectedBookingType === 'Couple'" class="text-info d-block mt-1 small">
+                            Includes {{ tour.coupleDiscountPercentage }}% discount!
+                        </small>
+                        <small *ngIf="selectedBookingType === 'Bulk'" class="text-info d-block mt-1 small">
+                            Includes {{ tour.bulkDiscountPercentage }}% discount for 6+
+                            persons!
+                        </small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-muted">Number of Persons</label>
+                        <input type="number" class="form-control" [(ngModel)]="numberOfPeople" (input)="updatePrice()"
+                            [min]="minPeople" [disabled]="selectedBookingType !== 'Bulk'"
+                            [ngClass]="{'is-invalid': selectedBookingType === 'Bulk' && numberOfPeople < 6}">
+                        <div class="invalid-feedback" *ngIf="selectedBookingType === 'Bulk' && numberOfPeople < 6">
+                            Bulk booking requires at least 6 people.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4 mt-4 p-3 bg-light rounded-3">
+                        <span class="fw-bold">Total Price:</span>
+                        <span class="fw-bold text-primary fs-5">Rs. {{ totalPrice | number }}</span>
+                    </div>
+
+                    <button class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow-sm mb-3" (click)="bookTour()"
+                        [disabled]="isAlreadyBooked || isBooking || tour.seatsBooked >= tour.totalSeats || (selectedBookingType === 'Bulk' && numberOfPeople < 6)">
+                        <span *ngIf="isBooking" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        {{ isBooking ? 'Processing Payment...' : (isAlreadyBooked ? 'Already Booked' : (tour.seatsBooked
+                        >= tour.totalSeats ? 'Full' : 'Book & Pay Now')) }}
+                    </button>
+                    <button class="btn btn-outline-secondary w-100 py-2 fw-bold rounded-pill">Contact Organizer</button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<ng-template #loadingOrError>
+    <div class="container py-5 text-center mt-5">
+        <div *ngIf="isLoading" class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <div *ngIf="!isLoading && !tour" class="alert alert-warning d-inline-block px-5 py-4">
+            <h4 class="alert-heading fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i> Tour Not Found</h4>
+            <p class="mb-0">The tour you are looking for does not exist or has been removed.</p>
+            <a routerLink="/tourist/dashboard" class="btn btn-warning mt-3 fw-bold">Back to Dashboard</a>
+        </div>
+    </div>
+</ng-template>

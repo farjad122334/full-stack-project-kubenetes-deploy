@@ -1,0 +1,63 @@
+/* Container */
+.dashboard-container {
+    padding-bottom: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Typography */
+.section-title {
+    letter-spacing: -0.5px;
+}
+
+/* Cards */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff;
+}
+
+.card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Badges */
+.badge {
+    font-size: 0.75rem;
+    border: 1px solid transparent;
+}
+
+.badge.bg-warning-subtle {
+    background-color: #fef9c3 !important;
+    /* Yellow-100 */
+    color: #854d0e !important;
+    /* Yellow-800 */
+    border-color: #fef08a !important;
+    /* Yellow-200 */
+}
+
+.badge.bg-primary-subtle {
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+    border-color: #bfdbfe !important;
+}
+
+/* Buttons */
+.btn-light {
+    background-color: #f8fafc;
+    border-color: #e2e8f0 !important;
+    transition: all 0.2s;
+}
+
+.btn-light:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1 !important;
+}
+
+/* Utilities */
+.text-primary {
+    color: #2563eb !important;
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}
