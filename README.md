@@ -4,7 +4,6 @@ A comprehensive tourism platform enabling tour management, driver coordination, 
 
 ## 🚀 Live Demo
 - **Frontend:** `http://18.206.145.114:30007`
-- **Admin Login:** `admin@travel.com` / `Admin@123`
 
 ## 🏗️ Architecture
 ```text
