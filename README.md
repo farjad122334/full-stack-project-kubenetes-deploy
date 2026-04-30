@@ -155,9 +155,9 @@ jobs:
 - **Troubleshooting:** Mastered `kubectl exec`, `curl`, and log analysis for debugging.
 
 ## 📞 Contact
-- **GitHub:** [farjad122334](https://github.com/farjad122334)
-- **LinkedIn:** [Your LinkedIn Profile]
-- **Portfolio:** [Your Portfolio Website]
+- **GitHub:** (https://github.com/farjad122334)
+- **LinkedIn:** www.linkedin.com/in/muhammad-farjad-b231a8299
+- **Portfolio:** https://app.netlify.com/projects/farjad-porfolio/overview
 
 ## 🙏 Acknowledgments
 - Stack Overflow community for troubleshooting help.
